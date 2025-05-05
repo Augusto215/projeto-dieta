@@ -1,0 +1,1159 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wellness Activities</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --warm-sand: #F1EAE3;
+            --deep-graphite: #2B2B2B;
+            --dark-teal: #4A6A68;
+            --coral-ember: #E26D5A;
+            --dusty-peach: #D8B7A6;
+        }
+
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background-color: var(--warm-sand);
+            color: var(--deep-graphite);
+            min-height: 100vh;
+        }
+
+        .main-container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            padding-bottom: 80px;
+        }
+
+        /* Header Navigation */
+        .profile-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            padding: 10px 0;
+        }
+
+        .profile-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .profile-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #ccc;
+            margin-right: 15px;
+        }
+
+        .header-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .edit-icon {
+            color: #888;
+            font-size: 18px;
+        }
+
+        .nav-tabs {
+            display: flex;
+            border-bottom: 1px solid #dee2e6;
+            margin-bottom: 20px;
+        }
+
+        .nav-tab {
+            flex: 1;
+            text-align: center;
+            padding: 10px 0;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .nav-tab.active {
+            color: var(--coral-ember);
+            border-bottom: 2px solid var(--coral-ember);
+        }
+
+        /* Activity Cards */
+        .activity-content {
+            margin-top: 20px;
+        }
+
+        .activity-card {
+            background-color: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+
+        .activity-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .activity-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background-color: #e8f3ff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            color: #4A6A68;
+            font-size: 24px;
+        }
+
+        .activity-title {
+            margin: 0;
+            font-weight: 600;
+            font-size: 18px;
+        }
+
+        .activity-description {
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .activity-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .stat-item {
+            text-align: center;
+            flex: 1;
+        }
+
+        .stat-value {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--dark-teal);
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #888;
+        }
+
+        .activity-progress {
+            height: 8px;
+            background-color: #eee;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: var(--coral-ember);
+            border-radius: 4px;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #888;
+        }
+
+        .start-button {
+            background-color: var(--dark-teal);
+            color: white;
+            border: none;
+            padding: 12px 0;
+            border-radius: 8px;
+            font-weight: 500;
+            width: 100%;
+            text-align: center;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .start-button:hover {
+            background-color: #3a5553;
+        }
+
+        .secondary-button {
+            background-color: transparent;
+            border: 1px solid var(--dark-teal);
+            color: var(--dark-teal);
+            padding: 10px 0;
+            border-radius: 8px;
+            font-weight: 500;
+            width: 100%;
+            text-align: center;
+            margin-top: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .secondary-button:hover {
+            background-color: rgba(74, 106, 104, 0.1);
+        }
+
+        /* Light Activation Specific Styles */
+        .light-activation-icon {
+            background-color: #fff5e6;
+            color: #f6a22d;
+        }
+
+        /* Navigation Bar Styles */
+        .fixed-bottom {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 1030;
+        }
+
+        .bg-white {
+            background-color: white;
+        }
+
+        .border-top {
+            border-top: 1px solid #dee2e6;
+        }
+
+        .d-flex {
+            display: flex;
+        }
+
+        .justify-content-around {
+            justify-content: space-around;
+        }
+
+        .py-2 {
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
+        }
+
+        .nav-item {
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .nav-item svg {
+            margin-bottom: 2px;
+        }
+
+        /* Active and inactive navigation states */
+        .nav-item div {
+            font-size: 12px;
+            color: #adb5bd;
+        }
+
+        /* Active navigation item */
+        .nav-item:nth-child(2) svg {
+            fill: #e94057;
+        }
+
+        .nav-item:nth-child(2) div {
+            color: #e94057;
+            font-weight: 500;
+        }
+        
+        /* Article styles */
+        .article-card {
+            background-color: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+        
+        .article-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--dark-teal);
+        }
+        
+        .article-content {
+            color: #555;
+            line-height: 1.6;
+        }
+        
+        .article-content p {
+            margin-bottom: 15px;
+        }
+        
+        .article-content ul {
+            padding-left: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .article-content li {
+            margin-bottom: 10px;
+        }
+        
+        .highlight-box {
+            background-color: #f8f3ed;
+            border-left: 3px solid var(--coral-ember);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .references {
+            font-size: 12px;
+            color: #888;
+            border-top: 1px solid #eee;
+            margin-top: 20px;
+            padding-top: 15px;
+        }
+        
+        .references p {
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <!-- Profile Header -->
+        <div class="profile-header">
+            <div class="profile-info">
+                <div class="profile-avatar"></div>
+                <h2 class="header-title">Wellness Activities</h2>
+            </div>
+            <div class="edit-icon">
+                <i class="fas fa-pencil-alt"></i>
+            </div>
+        </div>
+
+        <!-- Activity Tabs -->
+        <div class="nav-tabs">
+            <div class="nav-tab active" data-target="glucose-walk">Glucose Walk™</div>
+            <div class="nav-tab" data-target="light-activation">Light Activation</div>
+        </div>
+
+        <!-- Glucose Walk Content -->
+        <div id="glucose-walk" class="activity-content">
+            <div class="activity-card">
+                <div class="activity-header">
+                    <div class="activity-icon">
+                        <i class="fas fa-walking"></i>
+                    </div>
+                    <h3 class="activity-title">Glucose Walk™</h3>
+                </div>
+                <p class="activity-description">A 10-minute walk after meals helps regulate blood sugar levels and improves insulin sensitivity. Aim for at least 2-3 walks per day.</p>
+                
+                <div class="activity-stats">
+                    <div class="stat-item">
+                        <div class="stat-value">2/3</div>
+                        <div class="stat-label">Today's walks</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">67%</div>
+                        <div class="stat-label">Completion</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">5</div>
+                        <div class="stat-label">Day streak</div>
+                    </div>
+                </div>
+                
+                <div class="activity-progress">
+                    <div class="progress-bar" style="width: 67%;"></div>
+                </div>
+                <div class="progress-label">
+                    <span>0 walks</span>
+                    <span>3 walks</span>
+                </div>
+                
+                <button class="start-button">Start Walk Now</button>
+                <button class="secondary-button">View History</button>
+            </div>
+            
+            <!-- Article 1 -->
+            <div class="article-card">
+                <h3 class="article-title">Why Walking After Meals Flattens Your Blood Sugar Curve</h3>
+                <div class="article-content">
+                    <p>When we think about controlling blood sugar or losing fat, most of us focus on what we eat. But did you know that what you do after eating is just as important?</p>
+                    
+                    <p>One of the simplest ways to balance your blood sugar and reduce fat storage is to walk for just 10 minutes after your meals.</p>
+                    
+                    <p>After you eat, your blood sugar naturally rises — especially if your meal contains carbohydrates. If this rise is too sharp, your body stores more fat, you feel sluggish, and you're likely to experience cravings later in the day.</p>
+                    
+                    <p>Here's the good news: a light walk can change everything. Walking uses your muscles, and muscles pull glucose out of your bloodstream for energy.</p>
+                    
+                    <div class="highlight-box">
+                        <p>This means your body doesn't need to rely solely on insulin to manage your blood sugar — it naturally lowers it through movement.</p>
+                    </div>
+                    
+                    <p>Studies show that just 10–15 minutes of walking after meals can significantly reduce blood sugar spikes and help you avoid crashes.</p>
+                    
+                    <p><strong>Why does this matter?</strong></p>
+                    <ul>
+                        <li>Flatter glucose curves = fewer cravings and more energy.</li>
+                        <li>You'll feel less bloated after meals.</li>
+                        <li>Over time, your body becomes more insulin-sensitive, meaning you burn more fat instead of storing it.</li>
+                    </ul>
+                    
+                    <p><strong>How to Start Glucose Walks™:</strong></p>
+                    <ul>
+                        <li>Walk for 5–15 minutes after your main meals (breakfast, lunch, or dinner).</li>
+                        <li>Go at a light pace — no need to sweat.</li>
+                        <li>Anywhere counts: indoors, outdoors, around your home, or at work.</li>
+                        <li>Short on time? Even 3–5 minutes is better than nothing.</li>
+                        <li>Make it a daily habit — the more consistent, the better the results.</li>
+                    </ul>
+                    
+                    <p>This small habit can have a big impact on your energy, metabolism, and cravings. No gym, no equipment, no stress — just walk, breathe, and feel better.</p>
+                    
+                    <div class="references">
+                        <p>References:</p>
+                        <p>Colberg SR, et al. (2016). Physical Activity/Exercise and Diabetes: A Position Statement of the American Diabetes Association.</p>
+                        <p>DiPietro L, et al. (2013). Postprandial Walking: A Simple Behavioral Strategy for Glucose Control in Type 2 Diabetes.</p>
+                        <p>Reynolds AN, et al. (2016). Walking After Meals: A Systematic Review and Meta-analysis.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Article 2 -->
+            <div class="article-card">
+                <h3 class="article-title">How to Make Post-Meal Walking a Simple, Daily Habit</h3>
+                <div class="article-content">
+                    <p>You already know that walking after meals can help flatten your blood sugar curve, control cravings, and support fat loss. But the hardest part? Sticking with it every day.</p>
+                    
+                    <p>The truth is, it doesn't have to be perfect. It just needs to be consistent.</p>
+                    
+                    <p><strong>Why You Don't Need to Overthink It:</strong></p>
+                    <ul>
+                        <li>You don't need 30 minutes. Even 5–10 minutes is enough to help your body manage glucose more effectively.</li>
+                        <li>You don't need fancy clothes, shoes, or equipment.</li>
+                        <li>Slow, relaxed walking is just as effective as fast walking — this is about movement, not exercise.</li>
+                    </ul>
+                    
+                    <p><strong>Easy Ways to Fit Glucose Walks™ into Your Day:</strong></p>
+                    <ul>
+                        <li>After breakfast: Walk around your home while listening to music or a podcast.</li>
+                        <li>After lunch: Walk around your office building, go outside for fresh air, or even pace indoors.</li>
+                        <li>After dinner: Take a short stroll with family, a pet, or enjoy some quiet solo time.</li>
+                    </ul>
+                    
+                    <div class="highlight-box">
+                        <p><strong>Mini-Walks Add Up:</strong><br>
+                        If 10 minutes feels too long, break it up:</p>
+                        <ul style="margin-bottom: 0;">
+                            <li>3 minutes after breakfast</li>
+                            <li>5 minutes after lunch</li>
+                            <li>4 minutes after dinner</li>
+                        </ul>
+                    </div>
+                    
+                    <p>Any movement is better than none. Every step helps flatten your glucose curve.</p>
+                    
+                    <p><strong>The Real-Life Benefits You'll Feel:</strong></p>
+                    <ul>
+                        <li>Less of that heavy, bloated feeling after meals.</li>
+                        <li>Steadier energy through the afternoon and evening.</li>
+                        <li>Fewer cravings for sweets or snacks.</li>
+                        <li>Over time, your body naturally becomes better at burning fat — without strict diets.</li>
+                    </ul>
+                    
+                    <p><strong>Remember:</strong><br>
+                    You don't have to walk perfectly every day. But every time you do, you're telling your body: "Let's use this fuel now, not store it."<br>
+                    It's a simple shift, and over time, it changes everything.</p>
+                    
+                    <div class="references">
+                        <p>References:</p>
+                        <p>DiPietro L, et al. (2013). Postprandial Walking: A Simple Behavioral Strategy for Glucose Control in Type 2 Diabetes.</p>
+                        <p>Heden TD, et al. (2013). Postprandial Exercise: A Tool to Improve Glucose Control.</p>
+                        <p>Colberg SR, et al. (2016). Physical Activity/Exercise and Diabetes: A Position Statement of the American Diabetes Association.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Article 3 -->
+            <div class="article-card">
+                <h3 class="article-title">Best Times to Walk for Fat Loss & All-Day Energy</h3>
+                <div class="article-content">
+                    <p>You already know that walking helps flatten blood sugar spikes, reduce fat storage, and increase energy. But when you walk can make all the difference.</p>
+                    
+                    <p>Certain times of the day are naturally better for boosting fat-burning, balancing hormones, and keeping you in control of your cravings and mood.</p>
+                    
+                    <p><strong>1. After Meals (Glucose Walk™ Standard)</strong></p>
+                    <ul>
+                        <li>This is the #1 time to walk for better blood sugar balance.</li>
+                        <li>Walking within 30 minutes after eating helps your body process glucose more efficiently, leading to:
+                            <ul>
+                                <li>Fewer cravings</li>
+                                <li>Less bloating</li>
+                                <li>Improved fat-burning</li>
+                            </ul>
+                        </li>
+                        <li>Goal: Walk for 5–15 minutes after each main meal.</li>
+                    </ul>
+                    
+                    <p><strong>2. First Thing in the Morning (Fasted Walk)</strong></p>
+                    <ul>
+                        <li>A gentle morning walk can help wake up your body, reduce cortisol naturally, and boost metabolism.</li>
+                        <li>Walking in a fasted state (before breakfast) encourages your body to tap into stored fat for energy.</li>
+                        <li>Morning light also helps regulate your circadian rhythm, leading to better sleep and more stable energy all day.</li>
+                        <li>Goal: Try 10–20 minutes after waking, before your first meal.</li>
+                    </ul>
+                    
+                    <p><strong>3. After Dinner (Evening Calm Walk)</strong></p>
+                    <ul>
+                        <li>Evening walks support better digestion, help flatten nighttime glucose spikes, and prepare your body for restful sleep.</li>
+                        <li>This is especially important after carb-rich dinners.</li>
+                        <li>It can also help you wind down, lower stress, and avoid late-night snacking.</li>
+                        <li>Goal: Walk 10–15 minutes within 30 minutes after dinner, at a relaxed pace.</li>
+                    </ul>
+                    
+                    <div class="highlight-box">
+                        <p><strong>Remember:</strong><br>
+                        There's no perfect time — but moving consistently throughout the day gives your body the best chance to burn fat naturally.</p>
+                    </div>
+                    
+                    <p><strong>Bonus Tips for Timing Walks:</strong></p>
+                    <ul>
+                        <li>Pair walking with phone calls, podcasts, or music you enjoy.</li>
+                        <li>Set gentle reminders to move after meals until it becomes second nature.</li>
+                        <li>Celebrate each walk as a win — small steps = big change over time.</li>
+                    </ul>
+                    
+                    <div class="references">
+                        <p>References:</p>
+                        <p>DiPietro L, et al. (2013). Postprandial Walking: A Simple Behavioral Strategy for Glucose Control in Type 2 Diabetes.</p>
+                        <p>Hofmekler O. (2002). The Warrior Diet: Switch on Your Biological Powerhouse for High Energy, Explosive Strength, and a Leaner, Harder Body.</p>
+                        <p>Zick CJ, et al. (2013). Circadian Rhythms and Exercise: Physical Activity Timing for Optimal Health and Fat Loss.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Light Activation Content (Hidden by default) -->
+        <div id="light-activation" class="activity-content" style="display: none;">
+            <div class="activity-card">
+                <div class="activity-header">
+                    <div class="activity-icon light-activation-icon">
+                        <i class="fas fa-sun"></i>
+                    </div>
+                    <h3 class="activity-title">Light Activation</h3>
+                </div>
+                <p class="activity-description">Quick 5-10 minute movement routines designed to optimize your metabolism, energy levels, and blood sugar control throughout the day.</p>
+                
+                <div class="activity-stats">
+                    <div class="stat-item">
+                        <div class="stat-value">2/3</div>
+                        <div class="stat-label">Today's routines</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">67%</div>
+                        <div class="stat-label">Completion</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">5</div>
+                        <div class="stat-label">Day streak</div>
+                    </div>
+                </div>
+                
+                <div class="activity-progress">
+                    <div class="progress-bar" style="width: 67%; background-color: #f6a22d;"></div>
+                </div>
+                <div class="progress-label">
+                    <span>0 routines</span>
+                    <span>3 routines</span>
+                </div>
+                
+                <button class="start-button" style="background-color: #f6a22d;">Start Routine Now</button>
+                <button class="secondary-button" style="border-color: #f6a22d; color: #f6a22d;">View History</button>
+            </div>
+            
+            <!-- Routine 1 -->
+            <div class="article-card">
+                <h3 class="article-title">Routine 1: Morning Metabolism Boost Flow</h3>
+                <div class="article-content">
+                    <p><strong>Goal:</strong> Wake up your body, increase circulation, and set your metabolism for the day.</p>
+                    <p><strong>Duration:</strong> 5–7 minutes</p>
+                    <p><strong>Best Time:</strong> First thing in the morning or before breakfast.</p>
+                    
+                    <p><strong>Steps:</strong></p>
+                    <ul>
+                        <li>
+                            <strong>Standing Reach & Side Stretch – 1 minute</strong>
+                            <ul>
+                                <li>Stand tall, feet hip-width apart.</li>
+                                <li>Reach both arms overhead, stretch up.</li>
+                                <li>Lean gently to one side, hold for 10 sec, switch sides.</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <strong>Shoulder Rolls – 30 seconds</strong>
+                            <ul>
+                                <li>Roll shoulders forward in slow circles for 15 sec.</li>
+                                <li>Then roll backward for 15 sec.</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <strong>Torso Twist – 1 minute</strong>
+                            <ul>
+                                <li>Place hands on your hips or extend arms outward.</li>
+                                <li>Gently twist your upper body left and right, keeping hips stable.</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <strong>Knee Lifts with Arm Reach – 1 minute</strong>
+                            <ul>
+                                <li>March in place, lifting knees to hip level.</li>
+                                <li>Reach opposite arm to the sky as each knee lifts.</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <strong>Forward Fold & Breathe – 1 minute</strong>
+                            <ul>
+                                <li>Stand tall, exhale and slowly fold forward.</li>
+                                <li>Let your arms hang, bend knees slightly.</li>
+                                <li>Take 3–5 deep breaths, slowly rise.</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <strong>Spine Roll-Up & Posture Reset – 1 minute</strong>
+                            <ul>
+                                <li>From standing, tuck your chin, roll your spine down slowly.</li>
+                                <li>Then roll back up, stacking vertebrae, ending with a posture reset: shoulders back, chest open.</li>
+                            </ul>
+                        </li>
+                    </ul>
+                    
+                    <div class="highlight-box">
+                        <p><strong>💡 Why It Works:</strong></p>
+                        <ul style="margin-bottom: 0;">
+                            <li>Increases blood flow = better glucose processing.</li>
+                            <li>Activates muscles gently to wake up metabolism.</li>
+                            <li>Combats cortisol spikes that can raise glucose in the morning.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Routine 2 -->
+            <div class="article-card">
+                <h3 class="article-title">Routine 2: Post-Meal Glucose Crusher</h3>
+                <div class="article-content">
+                    <p><strong>Goal:</strong> Support digestion and lower post-meal blood sugar.</p>
+                    <p><strong>Duration:</strong> 5–10 minutes</p>
+                    <p><strong>Best Time:</strong> 10–30 minutes after a main meal.</p>
+                    
+                    <p><strong>Steps:</strong></p>
+                    <ul>
+                        <li>
+                            <strong>Gentle Marching in Place – 2 minutes</strong>
+                            <ul>
+                                <li>Stand tall, begin marching slowly.</li>
+                                <li>Focus on breathing deeply, lifting knees lightly.</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <strong>Step-Touch Side to Side – 1 minute</strong>
+                            <ul>
+                                <li>Step right, touch left foot in.</li>
+                                <li>Step left, touch right foot in.</li>
+                                <li>Swing arms gently for rhythm.</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <strong>Standing Calf Raises – 1 minute</strong>
+                            <ul>
+                                <li>Feet hip-width apart, rise up onto your toes slowly.</li>
+                                <li>Lower down with control.</li>
+                                <li>Repeat slowly for 60 seconds.</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <strong>Mini Squats – 1 minute</strong>
+                            <ul>
+                                <li>Stand with feet shoulder-width apart.</li>
+                                <li>Lower into a shallow squat (just a small bend), rise back up.</li>
+                                <li>Keep your weight in your heels, chest lifted.</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <strong>Arm Circles – 1 minute</strong>
+                            <ul>
+                                <li>Extend arms out to the sides, make small circles forward for 30 sec.</li>
+                                <li>Reverse and circle backward for 30 sec.</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <strong>March & Cool Down – 2 minutes</strong>
+                            <ul>
+                                <li>Resume light marching, focus on breath.</li>
+                                <li>Slow your pace after 1 minute, finish with a deep inhale & exhale.</li>
+                            </ul>
+                        </li>
+                    </ul>
+                    
+                    <div class="highlight-box">
+                        <p><strong>💡 Why It Works:</strong></p>
+                        <ul style="margin-bottom: 0;">
+                            <li>Activates large muscle groups = faster glucose usage.</li>
+                            <li>Helps prevent post-meal crashes and supports fat-burning.</li>
+                            <li>A perfect non-intimidating alternative to structured workouts.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Routine 3 -->
+            <div class="article-card">
+                <h3 class="article-title">Routine 3: Midday Energy Reset</h3>
+                <div class="article-content">
+                    <p><strong>Goal:</strong> Re-energize your body, beat afternoon slumps, and flatten your blood sugar.</p>
+                    <p><strong>Duration:</strong> 5–7 minutes</p>
+                    <p><strong>Best Time:</strong> After lunch or during an energy dip.</p>
+                    
+                    <p><strong>Steps:</strong></p>
+                    <ul>
+                        <li>
+                            <strong>Standing Arm Stretch & Reach – 1 minute</strong>
+                            <ul>
+                                <li>Stand tall, clasp your hands overhead.</li>
+                                <li>Stretch up, lean slightly back, then side to side.</li>
+                                <li>Open chest, breathe deeply.</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <strong>Step-Back Lunges (Mini Version) – 1 minute</strong>
+                            <ul>
+                                <li>Step your right foot back, slight bend in both knees.</li>
+                                <li>Return to standing, switch sides.</li>
+                                <li>Keep it shallow, no pressure on knees.</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <strong>Standing Side Leg Lifts – 1 minute</strong>
+                            <ul>
+                                <li>Hold a chair or wall for balance.</li>
+                                <li>Lift right leg to the side, hold 2 sec, lower.</li>
+                                <li>Repeat 30 sec each side.</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <strong>Seated Twist (Chair or Standing) – 1 minute</strong>
+                            <ul>
+                                <li>Sit tall (or stand), twist torso to the right, hold for 10 sec.</li>
+                                <li>Twist to the left, hold.</li>
+                                <li>Repeat 2x each side.</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <strong>March + Shoulder Rolls – 2 minutes</strong>
+                            <ul>
+                                <li>Light march in place, roll shoulders forward/back as you move.</li>
+                                <li>Focus on breath — in through nose, out through mouth.</li>
+                            </ul>
+                        </li>
+                    </ul>
+                    
+                    <div class="highlight-box">
+                        <p><strong>💡 Why It Works:</strong></p>
+                        <ul style="margin-bottom: 0;">
+                            <li>Combats the afternoon crash by using muscles to clear glucose.</li>
+                            <li>Activates posture muscles, improving oxygen and focus.</li>
+                            <li>Keeps metabolism active without a full workout.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Routine 4 -->
+            <div class="article-card">
+                <h3 class="article-title">Routine 4: Evening Wind-Down Flow</h3>
+                <div class="article-content">
+                    <p><strong>Goal:</strong> Relax your body, aid digestion, and support deeper sleep while keeping glucose stable.</p>
+                    <p><strong>Duration:</strong> 5–8 minutes</p>
+                    <p><strong>Best Time:</strong> After dinner or before bed.</p>
+                    
+                    <p><strong>Steps:</strong></p>
+                    <ul>
+                        <li>
+                            <strong>Neck Rolls + Shoulder Drop – 1 minute</strong>
+                            <ul>
+                                <li>Drop your right ear to your shoulder, roll gently forward.</li>
+                                <li>Switch sides, repeat slowly.</li>
+                                <li>Relax your shoulders with each breath.</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <strong>Standing Forward Fold – 1 minute</strong>
+                            <ul>
+                                <li>Stand tall, slowly fold forward from the hips.</li>
+                                <li>Let arms hang, bend knees slightly.</li>
+                                <li>Take 3 deep breaths, slowly roll up.</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <strong>Wall Calf Stretch – 1 minute</strong>
+                            <ul>
+                                <li>Face a wall, place hands on it.</li>
+                                <li>Step one foot back, press heel down.</li>
+                                <li>Switch sides after 30 sec.</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <strong>Seated or Standing Cat-Cow Stretch – 1 minute</strong>
+                            <ul>
+                                <li>Inhale, arch back (chest forward), exhale, round spine.</li>
+                                <li>Repeat 6–8 slow rounds.</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <strong>Deep Breathing & Posture Reset – 2 minutes</strong>
+                            <ul>
+                                <li>Sit or stand tall.</li>
+                                <li>Inhale for 4 sec, hold for 4 sec, exhale for 6 sec.</li>
+                                <li>Repeat 5 times, finish with relaxed shoulders and a calm mind.</li>
+                            </ul>
+                        </li>
+                    </ul>
+                    
+                    <div class="highlight-box">
+                        <p><strong>💡 Why It Works:</strong></p>
+                        <ul style="margin-bottom: 0;">
+                            <li>Lowers evening cortisol, which helps overnight fat-burning.</li>
+                            <li>Supports digestion after dinner, reducing glucose spikes at night.</li>
+                            <li>Prepares your nervous system for deep, restorative sleep.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Routine 5 -->
+            <div class="article-card">
+                <h3 class="article-title">Routine 5: Digestive Flow (Beat the Bloat)</h3>
+                <div class="article-content">
+                    <p><strong>Goal:</strong> Stimulate digestion, reduce bloating, and support glucose regulation after meals.</p>
+                    <p><strong>Duration:</strong> 5–7 minutes</p>
+                    <p><strong>Best Time:</strong> After lunch or dinner, especially after heavier meals.</p>
+                    
+                    <p><strong>Steps:</strong></p>
+                    <ul>
+                        <li>
+                            <strong>Gentle Seated Torso Twists – 1 minute</strong>
+                            <ul>
+                                <li>Sit on a chair or stand tall.</li>
+                                <li>Twist gently to the right, hold for 5 sec, switch sides.</li>
+                                <li>Repeat 5 times each side to massage internal organs.</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <strong>Knee Lifts + Exhale – 1 minute</strong>
+                            <ul>
+                                <li>March in place, lifting knees to waist height.</li>
+                                <li>Exhale forcefully each time your knee rises.</li>
+                                <li>Helps engage your core and move trapped gas.</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <strong>Standing Side Bends – 1 minute</strong>
+                            <ul>
+                                <li>Feet hip-width apart, hands overhead.</li>
+                                <li>Bend to the right, hold for 5 sec, switch sides.</li>
+                                <li>Repeat slowly 5 times each side.</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <strong>Cat-Cow Standing Flow – 1 minute</strong>
+                            <ul>
+                                <li>Place hands on thighs.</li>
+                                <li>Inhale, arch back slightly, exhale, round spine.</li>
+                                <li>Move slowly, focusing on breath.</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <strong>Deep Belly Breaths – 1–2 minutes</strong>
+                            <ul>
+                                <li>Inhale deeply into your belly for 4 sec.</li>
+                                <li>Hold 2 sec, exhale slowly for 6 sec.</li>
+                                <li>Repeat 5–6 rounds.</li>
+                            </ul>
+                        </li>
+                    </ul>
+                    
+                    <div class="highlight-box">
+                        <p><strong>💡 Why It Works:</strong></p>
+                        <ul style="margin-bottom: 0;">
+                            <li>Stimulates digestion by gently activating your core muscles.</li>
+                            <li>Reduces post-meal bloating and sluggishness.</li>
+                            <li>Helps prevent glucose spikes by aiding blood flow to digestive organs.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Routine 6 -->
+            <div class="article-card">
+                <h3 class="article-title">Routine 6: Craving Control Quick Reset</h3>
+                <div class="article-content">
+                    <p><strong>Goal:</strong> Calm the nervous system and reduce sugar cravings through light movement and breathwork.</p>
+                    <p><strong>Duration:</strong> 5–6 minutes</p>
+                    <p><strong>Best Time:</strong> When cravings hit or during emotional eating urges.</p>
+                    
+                    <p><strong>Steps:</strong></p>
+                    <ul>
+                        <li>
+                            <strong>Wall Push-Ups – 1 minute</strong>
+                            <ul>
+                                <li>Stand facing a wall, arms outstretched.</li>
+                                <li>Lower your body toward the wall, push back.</li>
+                                <li>Do slow, controlled reps for 1 minute.</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <strong>High Knees (Low Impact) – 1 minute</strong>
+                            <ul>
+                                <li>March in place, lifting knees higher than usual.</li>
+                                <li>Focus on steady breathing, arms swinging.</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <strong>Side Step-Touches – 1 minute</strong>
+                            <ul>
+                                <li>Step right, tap left foot next to it.</li>
+                                <li>Step left, tap right foot in.</li>
+                                <li>Add light arm swings for rhythm.</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <strong>Stretch + Breathe – 1 minute</strong>
+                            <ul>
+                                <li>Reach arms overhead, inhale deeply.</li>
+                                <li>Exhale, fold forward slightly, let arms hang.</li>
+                                <li>Repeat 3–4 times.</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <strong>Craving Disruption Breathwork – 1–2 minutes</strong>
+                            <ul>
+                                <li>Inhale deeply for 5 sec, hold for 3 sec, exhale for 7 sec.</li>
+                                <li>Focus on how your body feels — cravings will fade as you shift.</li>
+                            </ul>
+                        </li>
+                    </ul>
+                    
+                    <div class="highlight-box">
+                        <p><strong>💡 Why It Works:</strong></p>
+                        <ul style="margin-bottom: 0;">
+                            <li>Light movement boosts feel-good hormones and shifts your focus.</li>
+                            <li>Breathwork calms stress, the root of most cravings.</li>
+                            <li>Helps you reclaim control in moments of emotional eating triggers.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Routine 7 -->
+            <div class="article-card">
+                <h3 class="article-title">Routine 7: Mid-Morning Energy Booster</h3>
+                <div class="article-content">
+                    <p><strong>Goal:</strong> Beat mid-morning sluggishness, activate muscles, and keep glucose flat.</p>
+                    <p><strong>Duration:</strong> 5–7 minutes</p>
+                    <p><strong>Best Time:</strong> Mid-morning (around 10–11am) or between breakfast and lunch.</p>
+                    
+                    <p><strong>Steps:</strong></p>
+                    <ul>
+                        <li>
+                            <strong>Standing Reach & Stretch Sequence – 1 minute</strong>
+                            <ul>
+                                <li>Stand tall, reach both arms overhead, stretch up.</li>
+                                <li>Exhale, fold forward, touch your knees or shins.</li>
+                                <li>Slowly rise, repeat 3–4 times.</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <strong>Heel Taps with Arm Swings – 1 minute</strong>
+                            <ul>
+                                <li>Tap your right heel forward, swing arms gently.</li>
+                                <li>Switch to left, alternating rhythmically.</li>
+                                <li>Keep your breath steady.</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <strong>Wall Sit (Mini Version) – 30 sec – 1 minute</strong>
+                            <ul>
+                                <li>Back against a wall, slide down into a shallow wall sit.</li>
+                                <li>Hold for 30 sec, focus on breathing.</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <strong>Torso Twists with Arm Reach – 1 minute</strong>
+                            <ul>
+                                <li>Stand tall, gently twist your torso left to right.</li>
+                                <li>Let arms swing naturally, keep hips facing forward.</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <strong>March & Cool Down – 1–2 minutes</strong>
+                            <ul>
+                                <li>Light march in place or walk around your space.</li>
+                                <li>Inhale through the nose, exhale through the mouth.</li>
+                            </ul>
+                        </li>
+                    </ul>
+                    
+                    <div class="highlight-box">
+                        <p><strong>💡 Why It Works:</strong></p>
+                        <ul style="margin-bottom: 0;">
+                            <li>Gently activates large muscle groups = better glucose use.</li>
+                            <li>Wakes up your brain and body without stress.</li>
+                            <li>Stops you from reaching for mid-morning snacks.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Routine 8 -->
+            <div class="article-card">
+                <h3 class="article-title">Routine 8: Evening Fat-Burn Flow</h3>
+                <div class="article-content">
+                    <p><strong>Goal:</strong> Stimulate light fat-burning, improve digestion, and support sleep prep.</p>
+                    <p><strong>Duration:</strong> 7–10 minutes</p>
+                    <p><strong>Best Time:</strong> After dinner or 1–2 hours before bed.</p>
+                    
+                    <p><strong>Steps:</strong></p>
+                    <ul>
+                        <li>
+                            <strong>Light Step-Back Lunges – 1 minute</strong>
+                            <ul>
+                                <li>Step right foot back, bend knees slightly, return.</li>
+                                <li>Alternate legs at a slow, steady pace.</li>
+                                <li>Keep chest lifted.</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <strong>Calf Raises – 1 minute</strong>
+                            <ul>
+                                <li>Stand tall, rise onto your toes slowly.</li>
+                                <li>Hold for 2 sec at the top, lower slowly.</li>
+                                <li>Focus on balance and breath.</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <strong>Standing Cat-Cow (Spine Stretch) – 1 minute</strong>
+                            <ul>
+                                <li>Hands on thighs, inhale, arch your back.</li>
+                                <li>Exhale, round your spine.</li>
+                                <li>Repeat slowly for 6–8 breaths.</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <strong>Leg Swings (Hip Opener) – 1 minute</strong>
+                            <ul>
+                                <li>Hold a wall/chair for balance.</li>
+                                <li>Swing one leg forward and back gently.</li>
+                                <li>Switch legs after 30 sec.</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <strong>Forward Fold + Deep Breathing – 1–2 minutes</strong>
+                            <ul>
+                                <li>Fold forward, let arms hang.</li>
+                                <li>Take deep belly breaths, relax your shoulders.</li>
+                                <li>Slowly rise, reset posture.</li>
+                            </ul>
+                        </li>
+                    </ul>
+                    
+                    <div class="highlight-box">
+                        <p><strong>💡 Why It Works:</strong></p>
+                        <ul style="margin-bottom: 0;">
+                            <li>Lowers evening blood sugar naturally.</li>
+                            <li>Promotes overnight fat-burning by reducing glucose storage.</li>
+                            <li>Prepares your body for deep, restorative sleep.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Routine 9 -->
+            <div class="article-card">
+                <h3 class="article-title">Routine 9: Flex & Flow Mobility Boost</h3>
+                <div class="article-content">
+                    <p><strong>Goal:</strong> Improve flexibility, reduce stiffness, support blood sugar control through gentle stretching.</p>
+                    <p><strong>Duration:</strong> 7–8 minutes</p>
+                    <p><strong>Best Time:</strong> Anytime – especially after long sitting periods or in the morning.</p>
+                    
+                    <p><strong>Steps:</strong></p>
+                    <ul>
+                        <li>
+                            <strong>Neck Rolls + Shoulder Shru
+    </div>
+
+    <!-- Navigation Bar -->
+    <div class="fixed-bottom bg-white border-top">
+        <div class="d-flex justify-content-around py-2">
+            <div class="nav-item text-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#adb5bd" viewBox="0 0 24 24">
+                    <path d="M21 13v10h-6v-6h-6v6h-6v-10h-3l12-12 12 12h-3zm-1-5.907v-5.093h-3v2.093l3 3z"/>
+                </svg>
+                <div>My plan</div>
+            </div>
+            <div class="nav-item text-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#e94057" viewBox="0 0 24 24">
+                    <path d="M12 2c5.514 0 10 4.486 10 10s-4.486 10-10 10-10-4.486-10-10 4.486-10 10-10zm0-2c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm-1.834 9.686l-4.166.575 3.032 2.914-.74 4.139 3.708-1.982 3.708 1.983-.74-4.139 3.032-2.915-4.166-.575-1.834-3.784-1.834 3.784z"/>
+                </svg>
+                <div>Activities</div>
+            </div>
+            <div class="nav-item text-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#adb5bd" viewBox="0 0 24 24">
+                    <path d="M23.111 20.058l-4.977-4.977c.965-1.52 1.523-3.322 1.523-5.251 0-5.42-4.409-9.83-9.829-9.83-5.42 0-9.828 4.41-9.828 9.83s4.408 9.83 9.829 9.83c1.834 0 3.552-.505 5.022-1.383l5.021 5.021c2.144 2.141 5.384-1.096 3.239-3.24zm-20.064-10.228c0-3.739 3.043-6.782 6.782-6.782s6.782 3.042 6.782 6.782-3.043 6.782-6.782 6.782-6.782-3.043-6.782-6.782zm2.01-1.764c1.984-4.599 8.664-4.066 9.922.749-2.534-2.974-6.993-3.294-9.922-.749z"/>
+                </svg>
+                <div>Explore</div>
+            </div>
+            <div class="nav-item text-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#adb5bd" viewBox="0 0 24 24">
+                    <path d="M12 0l-11 6v12.131l11 5.869 11-5.869v-12.066l-11-6.065zm7.91 6.646l-7.905 4.218-7.872-4.294 7.862-4.289 7.915 4.365zm-16.91 1.584l8 4.363v9.449l-8-4.261v-9.551zm18 0v9.609l-8 4.268v-9.521l8-4.356z"/>
+                </svg>
+                <div>Challenges</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // JavaScript for tab switching
+        document.addEventListener('DOMContentLoaded', function() {
+            const tabs = document.querySelectorAll('.nav-tab');
+            
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    // Remove active class from all tabs
+                    tabs.forEach(t => t.classList.remove('active'));
+                    
+                    // Add active class to clicked tab
+                    this.classList.add('active');
+                    
+                    // Hide all content sections
+                    document.querySelectorAll('.activity-content').forEach(content => {
+                        content.style.display = 'none';
+                    });
+                    
+                    // Show the selected content
+                    const targetId = this.getAttribute('data-target');
+                    document.getElementById(targetId).style.display = 'block';
+                });
+            });
+        });
+    </script>
+</body>
+</html>

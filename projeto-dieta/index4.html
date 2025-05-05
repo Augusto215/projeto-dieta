@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Progress Tracking</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        :root {
+            --warm-sand: #F1EAE3;
+            --deep-graphite: #2B2B2B;
+            --dark-teal: #4A6A68;
+            --coral-ember: #E26D5A;
+            --dusty-peach: #D8B7A6;
+            --soft-mint: #AED9C8;
+            --light-lavender: #E3E0F0;
+            --butter-yellow: #F9EFC7;
+        }
+
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background-color: var(--warm-sand);
+            color: var(--deep-graphite);
+            min-height: 100vh;
+        }
+
+        .main-container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            padding-bottom: 80px;
+        }
+
+        /* Header Navigation */
+        .profile-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            padding: 10px 0;
+        }
+
+        .profile-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .profile-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #ccc;
+            margin-right: 15px;
+        }
+
+        .header-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .edit-icon {
+            color: #888;
+            font-size: 18px;
+        }
+
+        .nav-tabs {
+            display: flex;
+            border-bottom: 1px solid #dee2e6;
+            margin-bottom: 20px;
+        }
+
+        .nav-tab {
+            flex: 1;
+            text-align: center;
+            padding: 10px 0;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .nav-tab.active {
+            color: var(--coral-ember);
+            border-bottom: 2px solid var(--coral-ember);
+        }
+
+        /* Card Styles */
+        .card {
+            background-color: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--dark-teal);
+        }
+
+        .card-subtitle {
+            font-size: 14px;
+            color: #888;
+            margin-bottom: 15px;
+        }
+
+        /* Chart Container */
+        .chart-container {
+            position: relative;
+            height: 200px;
+            margin-bottom: 20px;
+        }
+
+        /* Progress Metrics */
+        .metric-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #f5f5f5;
+        }
+
+        .metric-row:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .metric-label {
+            font-weight: 500;
+        }
+
+        .metric-value {
+            display: flex;
+            align-items: center;
+        }
+
+        .level-indicator {
+            display: flex;
+            gap: 5px;
+        }
+
+        .level-dot {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background-color: #f0f0f0;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .level-dot.low {
+            background-color: var(--butter-yellow);
+        }
+
+        .level-dot.medium {
+            background-color: var(--dusty-peach);
+        }
+
+        .level-dot.high {
+            background-color: var(--coral-ember);
+        }
+
+        .level-dot.active {
+            transform: scale(1.1);
+            border: 2px solid var(--dark-teal);
+        }
+
+        /* Small Wins Styles */
+        .wins-section {
+            margin-bottom: 30px;
+        }
+
+        .win-level {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--dark-teal);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .win-level-badge {
+            font-size: 12px;
+            background-color: var(--soft-mint);
+            color: var(--deep-graphite);
+            padding: 3px 10px;
+            border-radius: 12px;
+            margin-left: 10px;
+        }
+
+        .win-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #f5f5f5;
+        }
+
+        .win-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+        .win-checkbox {
+            width: 22px;
+            height: 22px;
+            border: 2px solid var(--dark-teal);
+            border-radius: 4px;
+            margin-right: 15px;
+            margin-top: 3px;
+            position: relative;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .win-checkbox.checked:after {
+            content: "✓";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: var(--dark-teal);
+            font-weight: bold;
+        }
+
+        .win-text {
+            font-size: 15px;
+            flex: 1;
+        }
+
+        /* Challenge Styles */
+        .challenge-card {
+            background-color: white;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease;
+        }
+
+        .challenge-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .challenge-card.active {
+            border: 2px solid var(--coral-ember);
+        }
+
+        .challenge-image {
+            height: 140px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+
+        .challenge-tag {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: var(--coral-ember);
+            color: white;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .challenge-content {
+            padding: 15px;
+        }
+
+        .challenge-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .challenge-description {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 15px;
+        }
+
+        .challenge-stats {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 13px;
+            color: #888;
+        }
+
+        .challenge-progress {
+            display: flex;
+            align-items: center;
+        }
+
+        .progress-bar-container {
+            height: 6px;
+            background-color: #f0f0f0;
+            border-radius: 3px;
+            width: 60px;
+            margin-right: 8px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background-color: var(--coral-ember);
+            border-radius: 3px;
+        }
+
+        /* Navigation Bar Styles */
+        .fixed-bottom {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 1030;
+        }
+
+        .bg-white {
+            background-color: white;
+        }
+
+        .border-top {
+            border-top: 1px solid #dee2e6;
+        }
+
+        .d-flex {
+            display: flex;
+        }
+
+        .justify-content-around {
+            justify-content: space-around;
+        }
+
+        .py-2 {
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
+        }
+
+        .nav-item {
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .nav-item svg {
+            margin-bottom: 2px;
+        }
+
+        /* Active and inactive navigation states */
+        .nav-item div {
+            font-size: 12px;
+            color: #adb5bd;
+        }
+
+        /* Active navigation item */
+        .nav-item:nth-child(3) svg {
+            fill: #e94057;
+        }
+
+        .nav-item:nth-child(3) div {
+            color: #e94057;
+            font-weight: 500;
+        }
+
+        /* Form elements */
+        .form-control {
+            border-radius: 8px;
+            padding: 12px;
+            border: 1px solid #ddd;
+            font-size: 15px;
+        }
+
+        .btn-primary {
+            background-color: var(--coral-ember);
+            border: none;
+            border-radius: 8px;
+            padding: 12px;
+            font-weight: 500;
+        }
+
+        .btn-primary:hover {
+            background-color: #d35c4a;
+        }
+
+        .form-label {
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        /* Animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <!-- Profile Header -->
+        <div class="profile-header">
+            <div class="profile-info">
+                <div class="profile-avatar"></div>
+                <h2 class="header-title">Progress Tracking</h2>
+            </div>
+            <div class="edit-icon">
+                <i class="fas fa-pencil-alt"></i>
+            </div>
+        </div>
+
+        <!-- Progress Tabs -->
+        <div class="nav-tabs">
+            <div class="nav-tab active" data-target="monitoring">Monitoring</div>
+            <div class="nav-tab" data-target="small-wins">Small Wins</div>
+            <div class="nav-tab" data-target="challenges">Challenges</div>
+        </div>
+
+        <!-- Monitoring Content -->
+        <div id="monitoring" class="content-section fade-in">
+            <!-- Weight Card -->
+            <div class="card">
+                <h3 class="card-title">Weight Progress</h3>
+                <p class="card-subtitle">Track your weight changes over time</p>
+                
+                <div class="chart-container">
+                    <canvas id="weightChart"></canvas>
+                </div>
+                
+                <div class="row mt-3">
+                    <div class="col-8">
+                        <div class="form-floating mb-3">
+                            <input type="number" class="form-control" id="currentWeight" placeholder="Current weight">
+                            <label for="currentWeight">Current weight (lbs)</label>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <button class="btn btn-primary h-100 w-100">Update</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Weekly Metrics Card -->
+            <div class="card">
+                <h3 class="card-title">Weekly Metrics</h3>
+                <p class="card-subtitle">Track how you feel each week</p>
+                
+                <!-- Cravings Metric -->
+                <div class="metric-row">
+                    <div class="metric-label">
+                        <i class="fas fa-cookie-bite me-2"></i> Cravings
+                    </div>
+                    <div class="metric-value">
+                        <div class="level-indicator">
+                            <div class="level-dot low active" data-level="low" data-metric="cravings"></div>
+                            <div class="level-dot medium" data-level="medium" data-metric="cravings"></div>
+                            <div class="level-dot high" data-level="high" data-metric="cravings"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Energy Metric -->
+                <div class="metric-row">
+                    <div class="metric-label">
+                        <i class="fas fa-bolt me-2"></i> Energy
+                    </div>
+                    <div class="metric-value">
+                        <div class="level-indicator">
+                            <div class="level-dot low" data-level="low" data-metric="energy"></div>
+                            <div class="level-dot medium" data-level="medium" data-metric="energy"></div>
+                            <div class="level-dot high active" data-level="high" data-metric="energy"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Sleep Metric -->
+                <div class="metric-row">
+                    <div class="metric-label">
+                        <i class="fas fa-moon me-2"></i> Sleep
+                    </div>
+                    <div class="metric-value">
+                        <div class="level-indicator">
+                            <div class="level-dot low" data-level="low" data-metric="sleep"></div>
+                            <div class="level-dot medium active" data-level="medium" data-metric="sleep"></div>
+                            <div class="level-dot high" data-level="high" data-metric="sleep"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Hunger Metric -->
+                <div class="metric-row">
+                    <div class="metric-label">
+                        <i class="fas fa-utensils me-2"></i> Hunger
+                    </div>
+                    <div class="metric-value">
+                        <div class="level-indicator">
+                            <div class="level-dot low" data-level="low" data-metric="hunger"></div>
+                            <div class="level-dot medium active" data-level="medium" data-metric="hunger"></div>
+                            <div class="level-dot high" data-level="high" data-metric="hunger"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="btn btn-primary w-100 mt-3">Save Weekly Progress</button>
+            </div>
+            
+            <!-- Metrics Charts -->
+            <div class="card">
+                <h3 class="card-title">Metrics Trends</h3>
+                <div class="chart-container">
+                    <canvas id="metricsChart"></canvas>
+                </div>
+                <div class="d-flex justify-content-center gap-3 mt-2">
+                    <div class="d-flex align-items-center">
+                        <div style="width: 10px; height: 10px; background-color: var(--coral-ember); border-radius: 50%; margin-right: 5px;"></div>
+                        <small>Cravings</small>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <div style="width: 10px; height: 10px; background-color: var(--soft-mint); border-radius: 50%; margin-right: 5px;"></div>
+                        <small>Energy</small>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <div style="width: 10px; height: 10px; background-color: var(--light-lavender); border-radius: 50%; margin-right: 5px;"></div>
+                        <small>Sleep</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Small Wins Content -->
+        <div id="small-wins" class="content-section fade-in" style="display: none;">
+            <!-- Newbie Level -->
+            <div class="card wins-section">
+                <div class="win-level">
+                    PLANA Newbie Level
+                    <span class="win-level-badge">2/4 completed</span>
+                </div>
+                
+                <div class="win-item">
+                    <div class="win-checkbox checked" data-win="newbie-diet"></div>
+                    <div class="win-text">7 days in a row following a glucose balancing diet</div>
+                </div>
+                
+                <div class="win-item">
+                    <div class="win-checkbox checked" data-win="newbie-movement"></div>
+                    <div class="win-text">7 days in a row doing some movement after the meals</div>
+                </div>
+                
+                <div class="win-item">
+                    <div class="win-checkbox" data-win="newbie-cravings"></div>
+                    <div class="win-text">7 days in a row without craving "junk" food all the time</div>
+                </div>
+                
+                <div class="win-item">
+                    <div class="win-checkbox" data-win="newbie-nap"></div>
+                    <div class="win-text">7 days in a row without needing a nap after the meals</div>
+                </div>
+            </div>
+            
+            <!-- Warrior Level -->
+            <div class="card wins-section">
+                <div class="win-level">
+                    PLANA Warrior Level
+                    <span class="win-level-badge">0/4 completed</span>
+                </div>
+                
+                <div class="win-item">
+                    <div class="win-checkbox" data-win="warrior-diet"></div>
+                    <div class="win-text">30 days in a row following a glucose balancing diet</div>
+                </div>
+                
+                <div class="win-item">
+                    <div class="win-checkbox" data-win="warrior-movement"></div>
+                    <div class="win-text">30 days in a row doing some movement after the meals</div>
+                </div>
+                
+                <div class="win-item">
+                    <div class="win-checkbox" data-win="warrior-cravings"></div>
+                    <div class="win-text">30 days in a row without craving "junk" food all the time</div>
+                </div>
+                
+                <div class="win-item">
+                    <div class="win-checkbox" data-win="warrior-nap"></div>
+                    <div class="win-text">30 days in a row without needing a nap after the meals</div>
+                </div>
+            </div>
+            
+            <!-- Expert Level -->
+            <div class="card wins-section">
+                <div class="win-level">
+                    PLANA Expert Level
+                    <span class="win-level-badge">0/4 completed</span>
+                </div>
+                
+                <div class="win-item">
+                    <div class="win-checkbox" data-win="expert-diet"></div>
+                    <div class="win-text">90 days in a row following a glucose balancing diet</div>
+                </div>
+                
+                <div class="win-item">
+                    <div class="win-checkbox" data-win="expert-movement"></div>
+                    <div class="win-text">90 days in a row doing some movement after the meals</div>
+                </div>
+                
+                <div class="win-item">
+                    <div class="win-checkbox" data-win="expert-cravings"></div>
+                    <div class="win-text">90 days in a row without craving "junk" food all the time</div>
+                </div>
+                
+                <div class="win-item">
+                    <div class="win-checkbox" data-win="expert-nap"></div>
+                    <div class="win-text">90 days in a row without needing a nap after the meals</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Challenges Content -->
+        <div id="challenges" class="content-section fade-in" style="display: none;">
+            <!-- Active Challenge -->
+            <div class="challenge-card active">
+                <div class="challenge-image" style="background-image: url('/api/placeholder/400/200');">
+                    <div class="challenge-tag">Active</div>
+                </div>
+                <div class="challenge-content">
+                    <h3 class="challenge-title">7-Day Glucose Balance Challenge</h3>
+                    <p class="challenge-description">Complete 7 consecutive days of post-meal walks and balanced plate meals to earn your first badge!</p>
+                    <div class="challenge-stats">
+                        <div class="challenge-progress">
+                            <div class="progress-bar-container">
+                                <div class="progress-bar-fill" style="width: 70%;"></div>
+                            </div>
+                            <span>5/7 days</span>
+                        </div>
+                        <div class="challenge-days">2 days left</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Upcoming Challenge -->
+            <div class="challenge-card">
+                <div class="challenge-image" style="background-image: url('/api/placeholder/400/200');">
+                    <div class="challenge-tag">Coming Soon</div>
+                </div>
+                <div class="challenge-content">
+                    <h3 class="challenge-title">21-Day Sugar Detox</h3>
+                    <p class="challenge-description">Eliminate added sugars for 21 days to reset your taste buds and crush your cravings.</p>
+                    <div class="challenge-stats">
+                        <div class="challenge-days">Starts in 3 days</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Completed Challenge -->
+            <div class="challenge-card">
+                <div class="challenge-image" style="background-image: url('/api/placeholder/400/200');">
+                    <div class="challenge-tag">Completed</div>
+                </div>
+                <div class="challenge-content">
+                    <h3 class="challenge-title">3-Day Morning Activation</h3>
+                    <p class="challenge-description">Complete the morning activation routine for 3 consecutive days to boost metabolism.</p>
+                    <div class="challenge-stats">
+                        <div class="challenge-progress">
+                            <div class="progress-bar-container">
+                                <div class="progress-bar-fill" style="width: 100%;"></div>
+                            </div>
+                            <span>3/3 days</span>
+                        </div>
+                        <div class="challenge-days">Completed on May 1</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation Bar -->
+    <div class="fixed-bottom bg-white border-top">
+        <div class="d-flex justify-content-around py-2">
+            <div class="nav-item text-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#adb5bd" viewBox="0 0 24 24">
+                    <path d="M21 13v10h-6v-6h-6v6h-6v-10h-3l12-12 12 12h-3zm-1-5.907v-5.093h-3v2.093l3 3z"/>
+                </svg>
+                <div>My plan</div>
+            </div>
+            <div class="nav-item text-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#adb5bd" viewBox="0 0 24 24">
+                    <path d="M12 2c5.514 0 10 4.486 10 10s-4.486 10-10 10-10-4.486-10-10 4.486-10 10-10zm0-2c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm-1.834 9.686l-4.166.575 3.032 2.914-.74 4.139 3.708-1.982 3.708 1.983-.74-4.139 3.032-2.915-4.166-.575-1.834-3.784-1.834 3.784z"/>
+                </svg>
+                <div>Activities</div>
+            </div>
+            <div class="nav-item text-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#e94057" viewBox="0 0 24 24">
+                    <path d="M12 0l-11 6v12.131l11 5.869 11-5.869v-12.066l-11-6.065zm7.91 6.646l-7.905 4.218-7.872-4.294 7.862-4.289 7.915 4.365zm-16.91 1.584l8 4.363v9.449l-8-4.261v-9.551zm18 0v9.609l-8 4.268v-9.521l8-4.356z"/>
+                </svg>
+                <div>Progress</div>
+            </div>
+            <div class="nav-item text-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#adb5bd" viewBox="0 0 24 24">
+                    <path d="M23.111 20.058l-4.977-4.977c.965-1.52 1.523-3.322 1.523-5.251 0-5.42-4.409-9.83-9.829-9.83-5.42 0-9.828 4.41-9.828 9.83s4.408 9.83 9.829 9.83c1.834 0 3.552-.505 5.022-1.383l5.021 5.021c2.144 2.141 5.384-1.096 3.239-3.24zm-20.064-10.228c0-3.739 3.043-6.782 6.782-6.782s6.782 3.042 6.782 6.782-3.043 6.782-6.782 6.782-6.782-3.043-6.782-6.782zm2.01-1.764c1.984-4.599 8.664-4.066 9.922.749-2.534-2.974-6.993-3.294-9.922-.749z"/>
+                </svg>
+                <div>Learn</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+    // Tab switching
+    const tabs = document.querySelectorAll('.nav-tab');
+    
+    tabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+            // Remove active class from all tabs
+            tabs.forEach(t => t.classList.remove('active'));
+            
+            // Add active class to clicked tab
+            this.classList.add('active');
+            
+            // Hide all content sections
+            document.querySelectorAll('.content-section').forEach(content => {
+                content.style.display = 'none';
+            });
+            
+            // Show the selected content
+            const targetId = this.getAttribute('data-target');
+            document.getElementById(targetId).style.display = 'block';
+        });
+    });
+    
+    // Level dots interaction
+    const levelDots = document.querySelectorAll('.level-dot');
+    levelDots.forEach(dot => {
+        dot.addEventListener('click', function() {
+            const metric = this.getAttribute('data-metric');
+            const level = this.getAttribute('data-level');
+            
+            // Remove active class from all dots in the same metric
+            document.querySelectorAll(`.level-dot[data-metric="${metric}"]`).forEach(d => {
+                d.classList.remove('active');
+            });
+            
+            // Add active class to clicked dot
+            this.classList.add('active');
+        });
+    });
+    
+    // Win checkboxes interaction
+    const checkboxes = document.querySelectorAll('.win-checkbox');
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('click', function() {
+            this.classList.toggle('checked');
+            
+            // Update level badges
+            updateLevelBadges();
+        });
+    });
+    
+    // Update level badges based on checked items
+    function updateLevelBadges() {
+        const levels = ['newbie', 'warrior', 'expert'];
+        
+        levels.forEach(level => {
+            const totalItems = document.querySelectorAll(`.win-checkbox[data-win^="${level}"]`).length;
+            const checkedItems = document.querySelectorAll(`.win-checkbox[data-win^="${level}"].checked`).length;
+            
+            // Update badge text
+            const badge = document.querySelector(`.win-level:contains('${level.charAt(0).toUpperCase() + level.slice(1)}') .win-level-badge`);
+            if (badge) {
+                badge.textContent = `${checkedItems}/${totalItems} completed`;
+            }
+        });
+    }
+    
+    // Initialize weight and metrics charts (if they exist on this page)
+    if (document.getElementById('weightChart')) {
+        initializeWeightChart();
+    }
+    
+    if (document.getElementById('metricsChart')) {
+        initializeMetricsChart();
+    }
+    
+    // Additional chart initialization functions would go here
+    
+}); // <-- This is the closing bracket for the document.addEventListener
