@@ -436,46 +436,59 @@
             <div class="nav-tab ">Shopping List</div>
             <div class="nav-tab">Favorites</div>
         </div>
+        <div class="date-selector" id="dateSelector"></div>
 
-        <div class="date-selector">
-            <div class="date-item active">
-                <div class="date-day">Wed</div>
-                <div class="date-number">1</div>
-                <div class="date-month">May</div>
-            </div>
-            <div class="date-item">
-                <div class="date-day">Thu</div>
-                <div class="date-number">2</div>
-                <div class="date-month">May</div>
-            </div>
-            <div class="date-item">
-                <div class="date-day">Fri</div>
-                <div class="date-number">3</div>
-                <div class="date-month">May</div>
-            </div>
-            <div class="date-item">
-                <div class="date-day">Sat</div>
-                <div class="date-number">4</div>
-                <div class="date-month">May</div>
-            </div>
-            <div class="date-item">
-                <div class="date-day">Sun</div>
-                <div class="date-number">5</div>
-                <div class="date-month">May</div>
-            </div>
-            <div class="date-item">
-                <div class="date-day">Mon</div>
-                <div class="date-number">6</div>
-                <div class="date-month">May</div>
-            </div>
-            <div class="date-item">
-                <div class="date-day">Tue</div>
-                <div class="date-number">7</div>
-                <div class="date-month">May</div>
-            </div>
-        </div>
+        <script>
+            const dateSelector = document.getElementById('dateSelector');
+            const today = new Date();
+            const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                                'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+          
+            const dateItems = [];
+          
+            for (let i = 0; i < 7; i++) {
+              const date = new Date(today);
+              date.setDate(today.getDate() + i);
+          
+              const day = dayNames[date.getDay()];
+              const dayNum = date.getDate();
+              const month = monthNames[date.getMonth()];
+              const dateISO = date.toISOString().split('T')[0];
+          
+              const div = document.createElement('div');
+              div.className = 'date-item' + (i === 0 ? ' active' : '');
+              div.innerHTML = `
+                <div class="date-day">${day}</div>
+                <div class="date-number">${dayNum}</div>
+                <div class="date-month">${month}</div>
+              `;
+              div.dataset.date = dateISO;
+          
+              div.addEventListener('click', function () {
+                // Remover classe active de todos
+                dateItems.forEach(item => item.classList.remove('active'));
+                this.classList.add('active');
+          
+                // Carregar refeições para a data clicada
+                loadDailyMeals(new Date(this.dataset.date));
+              });
+          
+              dateItems.push(div);
+              dateSelector.appendChild(div);
+            }
+          
+            // Carrega refeições do dia atual ao abrir
+            document.addEventListener('DOMContentLoaded', () => {
+              loadDailyMeals(today);
+            });
+          
+         
+          </script>
+          
+        
 
-        <div class="container d-flex justify-content-center py-4 mb-4">
+        <div class="container d-flex justify-content-center flex-column gap-3 py-4 mb-4" id="meal-container">
             <div class="recipe-card">
                 <div class="recipe-image">
                     <img src="assets/img/anh-nguyen-kcA-c3f_3FE-unsplash.jpg" alt="Cream Cheese and Egg Pancakes">
@@ -496,6 +509,58 @@
             </div>
         </div>
     </div>
+
+    <script>
+ async function loadDailyMeals(date = new Date()) {
+  const dateISO = date.toISOString().split('T')[0];
+
+  try {
+    const res = await fetch(`/daily-meals?date=${dateISO}`, {
+      method: 'GET',
+      credentials: 'include'
+    });
+
+    const meals = await res.json();
+
+    if (!Array.isArray(meals)) {
+      console.error('[loadDailyMeals] → Formato inesperado:', meals);
+      return;
+    }
+
+    const container = document.querySelector('#meal-container');
+    container.innerHTML = '';
+
+    meals.forEach(meal => {
+      const card = document.createElement('div');
+      card.className = 'recipe-card';
+      card.innerHTML = `
+        <div class="recipe-image">
+          <img src="${meal.recipes.image_url}" alt="${meal.recipes.title}">
+          <button class="favorite-btn" onclick="toggleFavorite(this, '${meal.recipes.id}')">
+           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"> <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06 a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path> </svg>
+          </button>
+        </div>
+        <div class="recipe-info">
+          <h5>${meal.recipes.title}</h5>
+          <div class="recipe-meta">${meal.meal_type} · ${meal.recipes.prep_time} min</div>
+          <div class="action-buttons">
+            <button class="btn btn-swap py-2" onclick="swapMeal('${meal.id}')">Swap</button>
+            <button class="btn btn-log py-2" onclick="logMeal('${meal.id}')">Log</button>
+          </div>
+        </div>
+      `;
+
+      // Aqui está a correção: aplica o fill diretamente no <path>
+      const path = card.querySelector('svg path');
+      path.setAttribute('fill', meal.favorited ? '#e94057' : '#adb5bd');
+
+      container.appendChild(card);
+    });
+  } catch (err) {
+    console.error('[loadDailyMeals] → Erro durante carregamento:', err.message);
+  }
+}
+    </script>
     <!-- Navigation Bar -->
     <div class="fixed-bottom bg-white border-top">
         <div class="d-flex justify-content-around py-2">
@@ -537,7 +602,6 @@
         }
 
         // JavaScript for date selection
-        const dateItems = document.querySelectorAll('.date-item');
         dateItems.forEach(item => {
             item.addEventListener('click', function() {
                 dateItems.forEach(i => i.classList.remove('active'));
@@ -636,6 +700,82 @@
     // Additional chart initialization functions would go here
     
 }); // <-- This is the closing bracket for the document.addEventListener
+// Ao clicar numa data
+async function swapMeal(mealId) {
+  try {
+    const res = await fetch(`/daily-meals/${mealId}/swap`, {
+      method: 'POST',
+      credentials: 'include'
+    });
+
+    const updatedMeal = await res.json();
+
+    if (!updatedMeal || !updatedMeal.recipes) {
+      console.error('Erro ao trocar refeição:', updatedMeal);
+      return;
+    }
+
+    // Atualiza só o card da refeição trocada
+    loadDailyMeals(new Date(document.querySelector('.date-item.active').dataset.date));
+  } catch (err) {
+    console.error('Erro ao trocar refeição:', err.message);
+  }
+}
+
+async function logMeal(mealId) {
+  try {
+    const res = await fetch('/meal-logs', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ meal_id: mealId })
+    });
+
+    const result = await res.json();
+
+    if (res.ok) {
+      alert('Refeição logada com sucesso!');
+    } else {
+      alert('Erro ao logar refeição: ' + result.message);
+    }
+  } catch (err) {
+    console.error('Erro ao logar refeição:', err.message);
+  }
+}
+
+async function toggleFavorite(button, recipeId) {
+    console.log(`[toggleFavorite] Iniciando para recipe_id=${recipeId}`);
+
+    try {
+      const res = await fetch('/favorites/toggle', {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ recipe_id: recipeId })
+      });
+
+      const result = await res.json();
+      console.log('[toggleFavorite] Resposta recebida:', result);
+
+      if (res.ok) {
+        const path = button.querySelector('svg path');
+path.setAttribute('fill', result.favorited ? '#e94057' : '#adb5bd');
+
+      } else {
+        console.warn(`[toggleFavorite] Falha na resposta da API:`, result.message || result);
+        alert('Erro: ' + (result.message || 'Erro inesperado'));
+      }
+
+    } catch (err) {
+      console.error(`[toggleFavorite] Erro de rede ou exceção:`, err.message);
+      alert('Erro ao processar favorito. Verifique sua conexão ou tente novamente.');
+    }
+  }
+
+  // Torna a função acessível globalmente
+  window.toggleFavorite = toggleFavorite;
+
 </script>
+
 </body>
 </html>
