@@ -649,3 +649,282 @@ app.post('/favorites/toggle', authenticateUser, async (req, res) => {
     return res.status(500).json({ message: 'Erro ao processar favorito' });
   }
 });
+
+app.get('/favorites', authenticateUser, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    console.log(`[GET /favorites] → Buscando favoritos do usuário ${userId}`);
+
+    // Pega os favoritos do usuário, e faz join com os dados da receita
+    const { data, error } = await supabase
+      .from('favorites')
+      .select(`
+        recipe_id,
+        recipes (
+          id,
+          title,
+          category,
+          prep_time,
+          image_url
+        )
+      `)
+      .eq('user_id', userId);
+
+    if (error) {
+      console.error('[GET /favorites] → Erro na query:', error.message);
+      return res.status(500).json({ message: 'Erro ao buscar favoritos' });
+    }
+
+    // Filtra receitas válidas (caso algum join venha nulo)
+    const recipes = data
+      .filter(fav => fav.recipes)
+      .map(fav => fav.recipes);
+
+    return res.status(200).json(recipes);
+  } catch (err) {
+    console.error('[GET /favorites] → Erro inesperado:', err.message);
+    return res.status(500).json({ message: 'Erro inesperado ao buscar favoritos' });
+  }
+});
+
+app.post('/shopping-list', authenticateUser, async (req, res) => {
+  const userId = req.user.id;
+  const { date, items } = req.body;
+
+  if (!date || !items) {
+    return res.status(400).json({ message: 'date e items são obrigatórios' });
+  }
+
+  try {
+    const { error } = await supabase
+      .from('shopping_list')
+      .upsert({ user_id: userId, date, items }, { onConflict: ['user_id', 'date'] });
+
+    if (error) throw error;
+
+    return res.status(200).json({ message: 'Lista salva com sucesso' });
+  } catch (err) {
+    console.error('[POST /shopping-list] →', err.message);
+    return res.status(500).json({ message: 'Erro ao salvar lista' });
+  }
+});
+
+app.get('/shopping-list', authenticateUser, async (req, res) => {
+  const userId = req.user.id;
+  const { date } = req.query;
+
+  if (!date) {
+    return res.status(400).json({ message: 'Parâmetro ?date= é obrigatório' });
+  }
+
+  try {
+    const { data, error } = await supabase
+      .from('shopping_list')
+      .select('*')
+      .eq('user_id', userId)
+      .eq('date', date)
+      .single();
+
+    if (error && error.code !== 'PGRST116') throw error;
+
+    return res.status(200).json(data || { items: '' });
+  } catch (err) {
+    console.error('[GET /shopping-list] →', err.message);
+    return res.status(500).json({ message: 'Erro ao buscar lista' });
+  }
+});
+
+
+app.put('/shopping-list/:id', authenticateUser, async (req, res) => {
+  const userId = req.user.id;
+  const { id } = req.params;
+  const { items } = req.body;
+
+  if (!items) {
+    return res.status(400).json({ message: 'Campo items é obrigatório' });
+  }
+
+  try {
+    const { error } = await supabase
+      .from('shopping_list')
+      .update({ items })
+      .eq('id', id)
+      .eq('user_id', userId);
+
+    if (error) throw error;
+
+    return res.status(200).json({ message: 'Lista atualizada com sucesso' });
+  } catch (err) {
+    console.error('[PUT /shopping-list] →', err.message);
+    return res.status(500).json({ message: 'Erro ao atualizar lista' });
+  }
+});
+
+app.delete('/shopping-list/:id', authenticateUser, async (req, res) => {
+  const userId = req.user.id;
+  const { id } = req.params;
+
+  try {
+    const { error } = await supabase
+      .from('shopping_list')
+      .delete()
+      .eq('id', id)
+      .eq('user_id', userId);
+
+    if (error) throw error;
+
+    return res.status(200).json({ message: 'Lista deletada com sucesso' });
+  } catch (err) {
+    console.error('[DELETE /shopping-list] →', err.message);
+    return res.status(500).json({ message: 'Erro ao deletar lista' });
+  }
+});
+
+app.post('/glucose-walk', authenticateUser, upload.single('image'), async (req, res) => {
+  console.log('[POST] /glucose-walk - chamada recebida');
+
+  const { title, text, references_text } = req.body;
+  console.log('> Body recebido:', { title, text, references_text });
+
+  let image_url = null;
+
+  if (!title || !text) {
+    console.warn('⚠️ Título ou texto ausente');
+    return res.status(400).json({ message: 'Título e texto são obrigatórios' });
+  }
+
+  if (req.file) {
+    console.log('> Arquivo recebido:', {
+      originalname: req.file.originalname,
+      mimetype: req.file.mimetype,
+      size: req.file.size
+    });
+
+    const ext = path.extname(req.file.originalname);
+    const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}${ext}`;
+    const filePath = `glucose_walk/${fileName}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from('glucose-images')
+      .upload(filePath, req.file.buffer, {
+        contentType: req.file.mimetype,
+        upsert: false
+      });
+
+    if (uploadError) {
+      console.error('❌ Erro ao subir imagem:', uploadError.message);
+      return res.status(500).json({ message: 'Erro ao salvar imagem' });
+    }
+
+    const { data } = supabase.storage.from('glucose-images').getPublicUrl(filePath);
+    image_url = data.publicUrl;
+    console.log('> Imagem salva em:', image_url);
+  }
+
+  const { error } = await supabase
+    .from('glucose_walk')
+    .insert([{ title, text, references_text, image_url }]);
+
+  if (error) {
+    console.error('❌ Erro ao inserir no banco:', error.message);
+    return res.status(500).json({ message: 'Erro ao salvar dado' });
+  }
+
+  console.log('✅ Glucose Walk inserido com sucesso');
+  return res.status(201).json({ message: 'Glucose Walk salvo com sucesso' });
+});
+
+
+app.get('/glucose-walk', authenticateUser, async (req, res) => {
+  const { data, error } = await supabase
+    .from('glucose_walk')
+    .select('*')
+    .order('created_at', { ascending: false });
+
+  if (error) return res.status(500).json({ message: 'Erro ao buscar dados' });
+  return res.status(200).json(data);
+});
+
+app.get('/glucose-walk/:id', authenticateUser, async (req, res) => {
+  const { id } = req.params;
+
+  const { data, error } = await supabase
+    .from('glucose_walk')
+    .select('*')
+    .eq('id', id)
+    .single();
+
+  if (error) {
+    console.error(`❌ Erro ao buscar entrada com ID ${id}:`, error.message);
+    return res.status(404).json({ message: 'Entrada não encontrada' });
+  }
+
+  return res.status(200).json(data);
+});
+
+app.put('/glucose-walk/:id', authenticateUser, upload.single('image'), async (req, res) => {
+  const { id } = req.params;
+  const { title, text, references_text } = req.body;
+  let image_url;
+
+  if (req.file) {
+    const ext = path.extname(req.file.originalname);
+    const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}${ext}`;
+    const filePath = `glucose_walk/${fileName}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from('glucose-images')
+      .upload(filePath, req.file.buffer, {
+        contentType: req.file.mimetype,
+        upsert: false
+      });
+
+    if (uploadError) return res.status(500).json({ message: 'Erro ao salvar imagem' });
+
+    const { data } = supabase.storage.from('glucose-images').getPublicUrl(filePath);
+    image_url = data.publicUrl;
+  }
+
+  const updatePayload = {
+    ...(title && { title }),
+    ...(text && { text }),
+    ...(references_text && { references_text }),
+    ...(image_url && { image_url })
+  };
+
+  const { error } = await supabase
+    .from('glucose_walk')
+    .update(updatePayload)
+    .eq('id', id);
+
+  if (error) return res.status(500).json({ message: 'Erro ao atualizar dado' });
+
+  return res.status(200).json({ message: 'Atualizado com sucesso' });
+});
+app.delete('/glucose-walk/:id', authenticateUser, async (req, res) => {
+  const { id } = req.params;
+
+  const { data: item, error: fetchError } = await supabase
+    .from('glucose_walk')
+    .select('image_url')
+    .eq('id', id)
+    .single();
+
+  if (fetchError) return res.status(404).json({ message: 'Item não encontrado' });
+
+  const { error: deleteError } = await supabase
+    .from('glucose_walk')
+    .delete()
+    .eq('id', id);
+
+  if (deleteError) return res.status(500).json({ message: 'Erro ao deletar' });
+
+  if (item?.image_url) {
+    const relativePath = item.image_url.split('/storage/v1/object/public/glucose-images/')[1];
+    if (relativePath) {
+      await supabase.storage.from('glucose-images').remove([`glucose_walk/${relativePath}`]);
+    }
+  }
+
+  return res.status(200).json({ message: 'Item deletado com sucesso' });
+});

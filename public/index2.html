@@ -432,12 +432,25 @@
 
         <!-- New Navigation Tabs -->
         <div class="nav-tabs">
-            <div class="nav-tab active">My Plan</div>
-            <div class="nav-tab ">Shopping List</div>
-            <div class="nav-tab">Favorites</div>
-        </div>
+            <div class="nav-tab active" data-target="planSection">My Plan</div>
+            <div class="nav-tab" data-target="shoppingSection">Shopping List</div>
+            <div class="nav-tab" data-target="favoritesSection">Favorites</div>
+          </div>
         <div class="date-selector" id="dateSelector"></div>
-
+        <!-- Seção de Shopping List -->
+<div id="shoppingSection" class="content-section" style="display: none;">
+    <div class="container py-3">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">Shopping List for <span id="selectedDateText"></span></h5>
+          <textarea id="shoppingListInput" rows="8" class="form-control mt-3" placeholder="Enter ingredients or notes here..."></textarea>
+          <div class="text-end mt-3">
+            <button class="btn btn-primary" onclick="saveShoppingList()">Save</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
         <script>
             const dateSelector = document.getElementById('dateSelector');
             const today = new Date();
@@ -466,13 +479,26 @@
               div.dataset.date = dateISO;
           
               div.addEventListener('click', function () {
-                // Remover classe active de todos
                 dateItems.forEach(item => item.classList.remove('active'));
                 this.classList.add('active');
-          
-                // Carregar refeições para a data clicada
-                loadDailyMeals(new Date(this.dataset.date));
-              });
+
+                const selectedDate = new Date(this.dataset.date);
+
+                // Atualiza refeições se estiver na aba My Plan
+                const isPlanVisible = document.getElementById('planSection').style.display !== 'none';
+                if (isPlanVisible) {
+                    loadDailyMeals(selectedDate);
+                }
+
+                // Atualiza lista se estiver na aba Shopping List
+                const isShoppingVisible = document.getElementById('shoppingSection').style.display !== 'none';
+                if (isShoppingVisible) {
+                    selectedShoppingDate = selectedDate;
+                    updateSelectedDateText();
+                    loadShoppingList();
+                }
+                });
+
           
               dateItems.push(div);
               dateSelector.appendChild(div);
@@ -488,27 +514,33 @@
           
         
 
-        <div class="container d-flex justify-content-center flex-column gap-3 py-4 mb-4" id="meal-container">
-            <div class="recipe-card">
-                <div class="recipe-image">
-                    <img src="assets/img/anh-nguyen-kcA-c3f_3FE-unsplash.jpg" alt="Cream Cheese and Egg Pancakes">
-                    <button class="favorite-btn">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
-                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                        </svg>
-                    </button>
-                </div>
-                <div class="recipe-info">
-                    <h5 class="recipe-title">Cream Cheese and Egg Pancakes</h5>
-                    <div class="recipe-meta">Breakfast · 10 min</div>
-                    <div class="action-buttons">
-                        <button class="btn btn-swap py-2">Swap</button>
-                        <button class="btn btn-log py-2">Log</button>
-                    </div>
-                </div>
-            </div>
-        </div>
+<!-- Seções por aba -->
+<div id="planSection" class="content-section">
+    <div class="container d-flex justify-content-center flex-column gap-3 py-4 mb-4" id="meal-container">
+      <!-- Refeições carregadas dinamicamente aqui -->
     </div>
+  </div>
+  
+  <div id="shoppingSection" class="content-section" style="display: none;">
+    <div class="container py-3" id="shopping-container">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">Shopping List for <span id="selectedDateText"></span></h5>
+          <textarea id="shoppingListInput" rows="8" class="form-control mt-3" placeholder="Enter ingredients or notes here..."></textarea>
+          <div class="text-end mt-3">
+            <button class="btn btn-primary" onclick="saveShoppingList()">Save</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div id="favoritesSection" class="content-section" style="display: none;">
+    <div class="container d-flex justify-content-center flex-column gap-3 py-4 mb-4" id="favorites-container">
+      <!-- Favoritos carregados dinamicamente -->
+    </div>
+  </div>
+  
 
     <script>
  async function loadDailyMeals(date = new Date()) {
@@ -615,6 +647,16 @@
             tab.addEventListener('click', function() {
                 navTabs.forEach(t => t.classList.remove('active'));
                 this.classList.add('active');
+                const tabText = this.textContent.trim();
+
+    if (tabText === 'My Plan') {
+      // Recarrega as refeições do dia selecionado
+      const selectedDate = document.querySelector('.date-item.active')?.dataset?.date;
+      loadDailyMeals(selectedDate ? new Date(selectedDate) : new Date());
+    }
+
+        document.querySelector('#dateSelector').style.display = 'flex'
+
             });
         });
         
@@ -774,8 +816,120 @@ path.setAttribute('fill', result.favorited ? '#e94057' : '#adb5bd');
 
   // Torna a função acessível globalmente
   window.toggleFavorite = toggleFavorite;
+  document.querySelector('.nav-tab:nth-child(3)').addEventListener('click', async () => {
+  console.log('[Favorites Tab] → Clique detectado, carregando favoritos...');
+
+  try {
+    const res = await fetch('/favorites', {
+      method: 'GET',
+      credentials: 'include'
+    });
+
+    const favorites = await res.json();
+    console.log('[Favorites Tab] → Dados recebidos:', favorites);
+
+    const container = document.querySelector('#favorites-container');
+    container.innerHTML = '';
+    document.querySelector('#dateSelector').style.display = 'none';
+
+    if (!Array.isArray(favorites) || favorites.length === 0) {
+      container.innerHTML = '<p class="text-center text-muted">Nenhuma receita favorita encontrada.</p>';
+      return;
+    }
+
+    favorites.forEach(recipe => {
+      const card = document.createElement('div');
+      card.className = 'recipe-card';
+      card.innerHTML = `
+        <div class="recipe-image">
+          <img src="${recipe.image_url}" alt="${recipe.title}">
+          <button class="favorite-btn" onclick="toggleFavorite(this, '${recipe.id}')">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06 a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" fill="#e94057"></path>
+            </svg>
+          </button>
+        </div>
+        <div class="recipe-info">
+          <h5>${recipe.title}</h5>
+          <div class="recipe-meta">${recipe.category} · ${recipe.prep_time} min</div>
+        </div>
+      `;
+      container.appendChild(card);
+    });
+  } catch (err) {
+    console.error('[Favorites Tab] → Erro ao carregar favoritos:', err.message);
+    alert('Erro ao carregar favoritos');
+  }
+});
 
 </script>
 
+<script>
+    let selectedShoppingDate = new Date(); // default = today
+    
+    document.addEventListener('DOMContentLoaded', function () {
+      // render dates
+      const dateSelector = document.getElementById('dateSelector');
+      const today = new Date();
+      const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+      const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                          'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    
+
+    
+      updateSelectedDateText();
+      loadShoppingList();
+    });
+    
+    function updateSelectedDateText() {
+      const dateStr = selectedShoppingDate.toISOString().split('T')[0];
+      document.getElementById('selectedDateText').textContent = dateStr;
+    }
+    
+    async function loadShoppingList() {
+      const date = selectedShoppingDate.toISOString().split('T')[0];
+      try {
+        const res = await fetch(`/shopping-list?date=${date}`, {
+          method: 'GET',
+          credentials: 'include'
+        });
+    
+        const result = await res.json();
+        if (res.ok) {
+          document.getElementById('shoppingListInput').value = result.items || '';
+        } else {
+          console.warn('Lista não encontrada, limpando campo.');
+          document.getElementById('shoppingListInput').value = '';
+        }
+      } catch (err) {
+        console.error('Erro ao buscar shopping list:', err.message);
+        document.getElementById('shoppingListInput').value = '';
+      }
+    }
+    
+    async function saveShoppingList() {
+      const date = selectedShoppingDate.toISOString().split('T')[0];
+      const items = document.getElementById('shoppingListInput').value;
+    
+      try {
+        const res = await fetch('/shopping-list', {
+          method: 'POST',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ date, items })
+        });
+    
+        const result = await res.json();
+        if (res.ok) {
+          alert('Lista salva com sucesso!');
+        } else {
+          alert('Erro ao salvar lista: ' + result.message);
+        }
+      } catch (err) {
+        console.error('Erro ao salvar lista:', err.message);
+        alert('Erro ao salvar lista');
+      }
+    }
+    </script>
 </body>
 </html>

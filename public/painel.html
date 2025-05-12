@@ -191,6 +191,11 @@
                     <i class="bi bi-people"></i> <span>Users</span>
                 </a>
             </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link" data-bs-toggle="tab" data-bs-target="#glucose-walk">
+                  <i class="bi bi-activity"></i> <span>Glucose Walk</span>
+                </a>
+              </li>
         </ul>
         <hr>
         <div class="dropdown">
@@ -311,6 +316,7 @@
                     </div>
                 </div>
             </div>
+
             
             <!-- Recipes Tab -->
             <div class="tab-pane fade" id="recipes">
@@ -367,6 +373,8 @@
                     </div>
                 </div>
                 
+                
+                  
                 <!-- Add Recipe Modal -->
 <div class="modal fade" id="addRecipeModal" tabindex="-1" aria-labelledby="addRecipeModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
@@ -460,6 +468,120 @@
       </div>
     </div>
   </div>
+            </div>
+  
+  <div class="tab-pane fade" id="glucose-walk">
+    <div class="container-fluid">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="page-title">Manage Glucose Walk</h1>
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addGlucoseModal">
+          <i class="bi bi-plus-circle"></i> New Entry
+        </button>
+      </div>
+  
+      <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">Entries</h5>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>Image</th>
+                  <th>Title</th>
+                  <th>Text</th>
+                  <th>References</th>
+                  <th>Date</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="glucoseEntries">
+                <!-- JS will populate here -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+<!-- Add Glucose Modal -->
+<div class="modal fade" id="addGlucoseModal" tabindex="-1" aria-labelledby="addGlucoseModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="addGlucoseModalLabel">New Glucose Walk Entry</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="glucoseForm">
+            <div class="mb-3">
+              <label for="glucoseTitle" class="form-label">Title</label>
+              <input type="text" class="form-control" id="glucoseTitle" name="title" required>
+            </div>
+            <div class="mb-3">
+              <label for="glucoseText" class="form-label">Text</label>
+              <textarea class="form-control" id="glucoseText" name="text" rows="4" required></textarea>
+            </div>
+            <div class="mb-3">
+              <label for="glucoseRefs" class="form-label">References</label>
+              <textarea class="form-control" id="glucoseRefs" name="references_text" rows="3"></textarea>
+            </div>
+            <div class="mb-3">
+              <label for="glucoseImage" class="form-label">Image</label>
+              <input type="file" class="form-control" id="glucoseImage" name="image" accept="image/*">
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary" onclick="submitGlucoseEntry()">Save Entry</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Edit Glucose Modal -->
+<div class="modal fade" id="editGlucoseModal" tabindex="-1" aria-labelledby="editGlucoseModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editGlucoseModalLabel">Edit Glucose Walk Entry</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="editGlucoseForm">
+            <input type="hidden" id="editGlucoseId">
+  
+            <div class="mb-3">
+              <label for="editGlucoseTitle" class="form-label">Title</label>
+              <input type="text" class="form-control" id="editGlucoseTitle" name="title" required>
+            </div>
+  
+            <div class="mb-3">
+              <label for="editGlucoseText" class="form-label">Text</label>
+              <textarea class="form-control" id="editGlucoseText" name="text" rows="4" required></textarea>
+            </div>
+  
+            <div class="mb-3">
+              <label for="editGlucoseRefs" class="form-label">References</label>
+              <textarea class="form-control" id="editGlucoseRefs" name="references_text" rows="3"></textarea>
+            </div>
+  
+            <div class="mb-3 text-center">
+              <label class="form-label">Image</label>
+              <img id="editGlucosePreview" src="/api/placeholder/120/120" class="thumbnail-preview mb-2" alt="Preview">
+              <input type="file" class="form-control" id="editGlucoseImage" name="image" accept="image/*">
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary" onclick="submitGlucoseEdit()">Save Changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
   <script>
     document.querySelector('#addRecipeModal .btn-primary').addEventListener('click', async () => {
         const form = document.getElementById('addRecipeForm');
@@ -1019,6 +1141,9 @@
                     </div>
                 </div>
             </div>
+            <!-- Glucose Walk Tab -->
+
+    
         </div>
     </main>
     <div class="modal fade" id="editRecipeModal" tabindex="-1" aria-labelledby="editRecipeModalLabel" aria-hidden="true">
@@ -1283,6 +1408,160 @@
 });
 
             </script>
+
+<script>
+    async function submitGlucoseEntry() {
+      const form = document.getElementById('glucoseForm');
+      const formData = new FormData(form);
+    
+      try {
+        const res = await fetch('/glucose-walk', {
+          method: 'POST',
+          body: formData
+        });
+    
+        const result = await res.json();
+    
+        if (res.ok) {
+          alert('Glucose Walk saved successfully');
+          bootstrap.Modal.getInstance(document.getElementById('addGlucoseModal')).hide();
+          form.reset();
+          loadGlucoseEntries();
+        } else {
+          alert('Error: ' + (result.message || 'Unknown error'));
+        }
+      } catch (err) {
+        alert('Network error: ' + err.message);
+      }
+    }
+    
+    async function loadGlucoseEntries() {
+      try {
+        const res = await fetch('/glucose-walk');
+        const data = await res.json();
+        const tbody = document.getElementById('glucoseEntries');
+        tbody.innerHTML = '';
+    
+        if (!Array.isArray(data)) return;
+    
+        data.forEach(entry => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td><img src="${entry.image_url || '/api/placeholder/60/60'}" width="60" height="60" class="rounded"/></td>
+            <td>${entry.title}</td>
+            <td>${entry.text}</td>
+            <td>${entry.references_text || ''}</td>
+            <td>${new Date(entry.created_at).toLocaleDateString()}</td>
+            <td>
+              <button class="btn btn-sm btn-outline-danger" onclick="deleteGlucoseEntry('${entry.id}')">
+                <i class="bi bi-trash"></i>
+              </button>
+
+            <button class="btn btn-sm btn-outline-secondary" onclick="editGlucoseEntry('${entry.id}')">
+  <i class="bi bi-pencil"></i>
+</button>
+            </td>
+
+
+          `;
+          tbody.appendChild(tr);
+        });
+      } catch (err) {
+        console.error('Failed to load glucose walk entries:', err);
+      }
+    }
+    
+    async function deleteGlucoseEntry(id) {
+      if (!confirm('Delete this entry?')) return;
+      try {
+        const res = await fetch(`/glucose-walk/${id}`, { method: 'DELETE' });
+        const result = await res.json();
+        if (res.ok) {
+          loadGlucoseEntries();
+        } else {
+          alert('Failed to delete: ' + (result.message || 'Unknown error'));
+        }
+      } catch (err) {
+        alert('Error deleting entry: ' + err.message);
+      }
+    }
+    
+    document.addEventListener('DOMContentLoaded', () => {
+  // Carrega ao iniciar a página, se já visível
+  if (document.querySelector('.tab-pane#glucose-walk').classList.contains('active')) {
+    loadGlucoseEntries();
+  }
+
+  // Carrega ao ativar a aba
+  document.querySelector('[data-bs-target="#glucose-walk"]').addEventListener('shown.bs.tab', () => {
+    loadGlucoseEntries();
+  });
+});
+
+async function editGlucoseEntry(id) {
+  try {
+    const res = await fetch(`/glucose-walk/${id}`, {
+      method: 'GET',
+      credentials: 'include'
+    });
+
+    if (!res.ok) {
+      alert('Erro ao buscar dados para edição');
+      return;
+    }
+
+    const entry = await res.json();
+
+    // Preenche os campos
+    document.getElementById('editGlucoseId').value = entry.id;
+    document.getElementById('editGlucoseTitle').value = entry.title;
+    document.getElementById('editGlucoseText').value = entry.text;
+    document.getElementById('editGlucoseRefs').value = entry.reference_text || '';
+    document.getElementById('editGlucosePreview').src = entry.image_url || '/api/placeholder/120/120';
+
+    // Mostra o modal
+    new bootstrap.Modal(document.getElementById('editGlucoseModal')).show();
+
+  } catch (err) {
+    alert('Erro ao carregar entrada: ' + err.message);
+  }
+}
+async function submitGlucoseEdit() {
+  const id = document.getElementById('editGlucoseId').value;
+  const formData = new FormData();
+
+  formData.append('title', document.getElementById('editGlucoseTitle').value);
+  formData.append('text', document.getElementById('editGlucoseText').value);
+  formData.append('references_text', document.getElementById('editGlucoseRefs').value);
+
+  const imageFile = document.getElementById('editGlucoseImage').files[0];
+  if (imageFile) {
+    formData.append('image', imageFile);
+  }
+
+  try {
+    const res = await fetch(`/glucose-walk/${id}`, {
+      method: 'PUT',
+      body: formData
+    });
+
+    const result = await res.json();
+
+    if (res.ok) {
+      alert('Entrada atualizada com sucesso!');
+      bootstrap.Modal.getInstance(document.getElementById('editGlucoseModal')).hide();
+      await loadGlucoseEntries();
+    } else {
+      alert('Erro ao atualizar: ' + (result.message || 'Erro desconhecido'));
+    }
+
+  } catch (err) {
+    alert('Erro inesperado: ' + err.message);
+  }
+}
+
+    </script>
+    
             
 </body>
 </html>
