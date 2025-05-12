@@ -753,14 +753,14 @@ async function swapMeal(mealId) {
     const updatedMeal = await res.json();
 
     if (!updatedMeal || !updatedMeal.recipes) {
-      console.error('Erro ao trocar refeição:', updatedMeal);
+      console.error('Error when changing meal:', updatedMeal);
       return;
     }
 
     // Atualiza só o card da refeição trocada
     loadDailyMeals(new Date(document.querySelector('.date-item.active').dataset.date));
   } catch (err) {
-    console.error('Erro ao trocar refeição:', err.message);
+    console.error('Error when changing meal:', err.message);
   }
 }
 
@@ -776,17 +776,17 @@ async function logMeal(mealId) {
     const result = await res.json();
 
     if (res.ok) {
-      alert('Refeição logada com sucesso!');
+      alert('Meal logged in successfully!');
     } else {
-      alert('Erro ao logar refeição: ' + result.message);
+      alert('Error logging in meal: ' + result.message);
     }
   } catch (err) {
-    console.error('Erro ao logar refeição:', err.message);
+    console.error('Error logging in meal:', err.message);
   }
 }
 
 async function toggleFavorite(button, recipeId) {
-    console.log(`[toggleFavorite] Iniciando para recipe_id=${recipeId}`);
+    console.log(`[toggleFavorite] starting to recipe_id=${recipeId}`);
 
     try {
       const res = await fetch('/favorites/toggle', {
@@ -797,20 +797,20 @@ async function toggleFavorite(button, recipeId) {
       });
 
       const result = await res.json();
-      console.log('[toggleFavorite] Resposta recebida:', result);
+      console.log('[toggleFavorite] Response received:', result);
 
       if (res.ok) {
         const path = button.querySelector('svg path');
 path.setAttribute('fill', result.favorited ? '#e94057' : '#adb5bd');
 
       } else {
-        console.warn(`[toggleFavorite] Falha na resposta da API:`, result.message || result);
+        console.warn(`[toggleFavorite] API response failed:`, result.message || result);
         alert('Erro: ' + (result.message || 'Erro inesperado'));
       }
 
     } catch (err) {
-      console.error(`[toggleFavorite] Erro de rede ou exceção:`, err.message);
-      alert('Erro ao processar favorito. Verifique sua conexão ou tente novamente.');
+      console.error(`[toggleFavorite] Network error or exception:`, err.message);
+      alert('Error processing favorite. Check your connection or try again.');
     }
   }
 
@@ -857,8 +857,8 @@ path.setAttribute('fill', result.favorited ? '#e94057' : '#adb5bd');
       container.appendChild(card);
     });
   } catch (err) {
-    console.error('[Favorites Tab] → Erro ao carregar favoritos:', err.message);
-    alert('Erro ao carregar favoritos');
+    console.error('[Favorites Tab] → Error loading favorites:', err.message);
+    alert('Error loading favorites');
   }
 });
 
@@ -898,7 +898,7 @@ path.setAttribute('fill', result.favorited ? '#e94057' : '#adb5bd');
         if (res.ok) {
           document.getElementById('shoppingListInput').value = result.items || '';
         } else {
-          console.warn('Lista não encontrada, limpando campo.');
+          console.warn('List not found, clearing field.');
           document.getElementById('shoppingListInput').value = '';
         }
       } catch (err) {
@@ -921,15 +921,17 @@ path.setAttribute('fill', result.favorited ? '#e94057' : '#adb5bd');
     
         const result = await res.json();
         if (res.ok) {
-          alert('Lista salva com sucesso!');
+          alert('List saved successfully!');
         } else {
           alert('Erro ao salvar lista: ' + result.message);
         }
       } catch (err) {
-        console.error('Erro ao salvar lista:', err.message);
-        alert('Erro ao salvar lista');
+        console.error('Error saving list:', err.message);
+        alert('Error saving list');
       }
     }
+
+    
     </script>
 </body>
 </html>

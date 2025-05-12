@@ -196,6 +196,11 @@
                   <i class="bi bi-activity"></i> <span>Glucose Walk</span>
                 </a>
               </li>
+            <li class="nav-item">
+            <a href="#" class="nav-link" data-bs-toggle="tab" data-bs-target="#light-activation">
+                <i class="bi bi-people"></i> <span>Light Activation</span>
+            </a>
+        </li>
         </ul>
         <hr>
         <div class="dropdown">
@@ -356,19 +361,7 @@
                                     </tbody>
                                 </table>
                             </div>
-                            <nav aria-label="Page navigation" class="mt-3">
-                                <ul class="pagination justify-content-center">
-                                    <li class="page-item disabled">
-                                        <a class="page-link" href="#" tabindex="-1">Previous</a>
-                                    </li>
-                                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                                    <li class="page-item"><a class="page-link" href="#">2</a></li>
-                                    <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                    <li class="page-item">
-                                        <a class="page-link" href="#">Next</a>
-                                    </li>
-                                </ul>
-                            </nav>
+                          
                         </div>
                     </div>
                 </div>
@@ -1143,8 +1136,137 @@
             </div>
             <!-- Glucose Walk Tab -->
 
-    
+    <!-- Light Activation Tab -->
+<div class="tab-pane fade" id="light-activation">
+    <div class="container-fluid">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="page-title">Manage Light Activation</h1>
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addLightActivationModal">
+          <i class="bi bi-plus-circle"></i> New Entry
+        </button>
+      </div>
+  
+      <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">Entries</h5>
         </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>Image</th>
+                  <th>Title</th>
+                  <th>Goal</th>
+                  <th>Duration</th>
+                  <th>Best Time</th>
+                  <th>Steps</th>
+                  <th>Date</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="lightActivationEntries">
+                <!-- Populated via JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Add Light Activation Modal -->
+  <div class="modal fade" id="addLightActivationModal" tabindex="-1" aria-labelledby="addLightActivationModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="addLightActivationModalLabel">New Light Activation Entry</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="lightActivationForm">
+            <div class="mb-3">
+              <label for="lightTitle" class="form-label">Title</label>
+              <input type="text" class="form-control" id="lightTitle" name="title" required>
+            </div>
+            <div class="mb-3">
+              <label for="lightGoal" class="form-label">Goal</label>
+              <input type="text" class="form-control" id="lightGoal" name="goal">
+            </div>
+            <div class="mb-3">
+              <label for="lightDuration" class="form-label">Duration</label>
+              <input type="text" class="form-control" id="lightDuration" name="duration">
+            </div>
+            <div class="mb-3">
+              <label for="lightBestTime" class="form-label">Best Time</label>
+              <input type="text" class="form-control" id="lightBestTime" name="best_time">
+            </div>
+            <div class="mb-3">
+              <label for="lightSteps" class="form-label">Steps</label>
+              <textarea class="form-control" id="lightSteps" name="steps" rows="3"></textarea>
+            </div>
+            <div class="mb-3">
+              <label for="lightImage" class="form-label">Image</label>
+              <input type="file" class="form-control" id="lightImage" name="image" accept="image/*">
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary" onclick="submitLightActivationEntry()">Save Entry</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Edit Light Activation Modal -->
+  <div class="modal fade" id="editLightActivationModal" tabindex="-1" aria-labelledby="editLightActivationModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editLightActivationModalLabel">Edit Light Activation Entry</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="editLightActivationForm">
+            <input type="hidden" id="editLightId">
+            <div class="mb-3">
+              <label for="editLightTitle" class="form-label">Title</label>
+              <input type="text" class="form-control" id="editLightTitle" name="title" required>
+            </div>
+            <div class="mb-3">
+              <label for="editLightGoal" class="form-label">Goal</label>
+              <input type="text" class="form-control" id="editLightGoal" name="goal">
+            </div>
+            <div class="mb-3">
+              <label for="editLightDuration" class="form-label">Duration</label>
+              <input type="text" class="form-control" id="editLightDuration" name="duration">
+            </div>
+            <div class="mb-3">
+              <label for="editLightBestTime" class="form-label">Best Time</label>
+              <input type="text" class="form-control" id="editLightBestTime" name="best_time">
+            </div>
+            <div class="mb-3">
+              <label for="editLightSteps" class="form-label">Steps</label>
+              <textarea class="form-control" id="editLightSteps" name="steps" rows="3"></textarea>
+            </div>
+            <div class="mb-3 text-center">
+              <label class="form-label">Image</label>
+              <img id="editLightPreview" src="/api/placeholder/120/120" class="thumbnail-preview mb-2" alt="Preview">
+              <input type="file" class="form-control" id="editLightImage" name="image" accept="image/*">
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary" onclick="submitLightActivationEdit()">Save Changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+        </div>
+        
     </main>
     <div class="modal fade" id="editRecipeModal" tabindex="-1" aria-labelledby="editRecipeModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
@@ -1267,6 +1389,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
           await loadRecipes();
+          await loadLightActivationEntries();
         });
         
         async function loadRecipes() {
@@ -1516,7 +1639,7 @@ async function editGlucoseEntry(id) {
     document.getElementById('editGlucoseId').value = entry.id;
     document.getElementById('editGlucoseTitle').value = entry.title;
     document.getElementById('editGlucoseText').value = entry.text;
-    document.getElementById('editGlucoseRefs').value = entry.reference_text || '';
+    document.getElementById('editGlucoseRefs').value = entry.references_text || '';
     document.getElementById('editGlucosePreview').src = entry.image_url || '/api/placeholder/120/120';
 
     // Mostra o modal
@@ -1561,7 +1684,154 @@ async function submitGlucoseEdit() {
 }
 
     </script>
+    <script>
+        async function loadLightActivationEntries() {
+  try {
+    const res = await fetch('/light-activation');
+    const data = await res.json();
+
+    if (!Array.isArray(data)) {
+      console.error('Resposta inválida:', data);
+      return;
+    }
+
+    const tbody = document.getElementById('lightActivationEntries');
+    tbody.innerHTML = '';
+
+    data.forEach(entry => {
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td><img src="${entry.image_url || '/api/placeholder/60/60'}" class="rounded" width="60" height="60" alt="Image"></td>
+        <td>${entry.title}</td>
+        <td>${entry.goal || '-'}</td>
+        <td>${entry.duration || '-'}</td>
+        <td>${entry.best_time || '-'}</td>
+        <td>${entry.steps || '-'}</td>
+        <td>${new Date(entry.created_at).toLocaleDateString()}</td>
+        <td>
+          <button class="btn btn-sm btn-outline-secondary" onclick="editLightActivationEntry('${entry.id}')"><i class="bi bi-pencil"></i></button>
+          <button class="btn btn-sm btn-outline-danger" onclick="deleteLightActivationEntry('${entry.id}')"><i class="bi bi-trash"></i></button>
+        </td>
+      `;
+      tbody.appendChild(row);
+    });
+  } catch (err) {
+    alert('Network error: ' + err.message);
+  }
+}
+    </script>
     
-            
+            <script>
+  async function submitLightActivationEntry() {
+    const form = document.getElementById('lightActivationForm');
+    const formData = new FormData(form);
+
+    try {
+      const res = await fetch('/light-activation', {
+        method: 'POST',
+        body: formData
+      });
+
+      const result = await res.json();
+
+      if (res.ok) {
+        alert('Light Activation entry saved successfully.');
+        bootstrap.Modal.getInstance(document.getElementById('addLightActivationModal')).hide();
+        form.reset();
+        loadLightActivationEntries(); // precisa existir ou ser implementado
+      } else {
+        alert('Error: ' + (result.message || 'Unknown error'));
+      }
+    } catch (err) {
+      alert('Network error: ' + err.message);
+    }
+  }
+
+  async function editLightActivationEntry(id) {
+  try {
+    const res = await fetch(`/light-activation/${id}`, {
+      method: 'GET'
+    });
+
+    if (!res.ok) {
+      alert('Erro ao buscar dados para edição');
+      return;
+    }
+
+    const entry = await res.json();
+
+    // Preenche os campos do modal
+    document.getElementById('editLightId').value = entry.id;
+    document.getElementById('editLightTitle').value = entry.title;
+    document.getElementById('editLightGoal').value = entry.goal || '';
+    document.getElementById('editLightDuration').value = entry.duration || '';
+    document.getElementById('editLightBestTime').value = entry.best_time || '';
+    document.getElementById('editLightSteps').value = entry.steps || '';
+    document.getElementById('editLightPreview').src = entry.image_url || '/api/placeholder/120/120';
+
+    new bootstrap.Modal(document.getElementById('editLightActivationModal')).show();
+  } catch (err) {
+    alert('Erro ao carregar entrada: ' + err.message);
+  }
+}
+
+
+async function deleteLightActivationEntry(id) {
+  if (!confirm('Tem certeza que deseja excluir esta entrada?')) return;
+
+  try {
+    const res = await fetch(`/light-activation/${id}`, {
+      method: 'DELETE'
+    });
+
+    const result = await res.json();
+
+    if (res.ok) {
+      alert('Entrada excluída com sucesso!');
+      await loadLightActivationEntries(); // Recarrega a tabela
+    } else {
+      alert('Erro ao excluir: ' + (result.message || 'Erro desconhecido'));
+    }
+  } catch (err) {
+    alert('Erro inesperado: ' + err.message);
+  }
+}
+
+async function submitLightActivationEdit() {
+  const id = document.getElementById('editLightId').value;
+  const formData = new FormData();
+
+  formData.append('title', document.getElementById('editLightTitle').value);
+  formData.append('goal', document.getElementById('editLightGoal').value);
+  formData.append('duration', document.getElementById('editLightDuration').value);
+  formData.append('best_time', document.getElementById('editLightBestTime').value);
+  formData.append('steps', document.getElementById('editLightSteps').value);
+
+  const imageFile = document.getElementById('editLightImage').files[0];
+  if (imageFile) {
+    formData.append('image', imageFile);
+  }
+
+  try {
+    const res = await fetch(`/light-activation/${id}`, {
+      method: 'PUT',
+      body: formData
+    });
+
+    const result = await res.json();
+
+    if (res.ok) {
+      alert('Entrada atualizada com sucesso!');
+      bootstrap.Modal.getInstance(document.getElementById('editLightActivationModal')).hide();
+      loadLightActivationEntries(); // Certifique-se de ter essa função
+    } else {
+      alert('Erro ao atualizar: ' + (result.message || 'Erro desconhecido'));
+    }
+  } catch (err) {
+    alert('Erro inesperado ao atualizar: ' + err.message);
+  }
+}
+
+</script>
 </body>
 </html>

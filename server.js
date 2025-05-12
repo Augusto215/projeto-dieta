@@ -928,3 +928,159 @@ app.delete('/glucose-walk/:id', authenticateUser, async (req, res) => {
 
   return res.status(200).json({ message: 'Item deletado com sucesso' });
 });
+
+app.post('/light-activation', authenticateUser, upload.single('image'), async (req, res) => {
+  const { title, goal, duration, best_time, steps } = req.body;
+  let image_url = null;
+
+  console.log('📥 Requisição recebida em /light-activation');
+  console.log('📝 Dados recebidos:', { title, goal, duration, best_time, steps });
+  if (req.file) {
+    console.log('📷 Imagem recebida:', req.file.originalname);
+  } else {
+    console.log('⚠️ Nenhuma imagem recebida');
+  }
+
+  if (!title) {
+    console.warn('❌ Falha: título ausente');
+    return res.status(400).json({ message: 'Título é obrigatório' });
+  }
+
+  if (req.file) {
+    const ext = path.extname(req.file.originalname);
+    const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}${ext}`;
+    const filePath = `light_activation/${fileName}`;
+
+    console.log('📁 Upload path:', filePath);
+
+    const { error: uploadError } = await supabase.storage
+      .from('light-activation-images')
+      .upload(filePath, req.file.buffer, {
+        contentType: req.file.mimetype,
+        upsert: false
+      });
+
+    if (uploadError) {
+      console.error('❌ Erro ao subir imagem no Supabase:', uploadError.message);
+      return res.status(500).json({ message: 'Erro ao salvar imagem' });
+    }
+
+    const { data } = supabase.storage.from('light-activation-images').getPublicUrl(filePath);
+    image_url = data.publicUrl;
+
+    console.log('✅ Imagem salva com sucesso. URL:', image_url);
+  }
+
+  const insertPayload = { title, goal, duration, best_time, steps, image_url };
+  console.log('📦 Inserindo no banco:', insertPayload);
+
+  const { error } = await supabase
+    .from('light_activation')
+    .insert([insertPayload]);
+
+  if (error) {
+    console.error('❌ Erro ao inserir no banco:', error.message);
+    return res.status(500).json({ message: 'Erro ao salvar dado' });
+  }
+
+  console.log('✅ Entrada salva com sucesso no banco!');
+  return res.status(201).json({ message: 'Light Activation salva com sucesso' });
+});
+
+// GET - buscar todas
+app.get('/light-activation', authenticateUser, async (req, res) => {
+  const { data, error } = await supabase
+    .from('light_activation')
+    .select('*')
+    .order('created_at', { ascending: false });
+
+  if (error) return res.status(500).json({ message: 'Erro ao buscar dados' });
+  return res.status(200).json(data);
+});
+
+// GET - buscar por ID
+app.get('/light-activation/:id', authenticateUser, async (req, res) => {
+  const { id } = req.params;
+  const { data, error } = await supabase
+    .from('light_activation')
+    .select('*')
+    .eq('id', id)
+    .single();
+
+  if (error) return res.status(404).json({ message: 'Item não encontrado' });
+  return res.status(200).json(data);
+});
+
+// PUT - atualizar por ID
+app.put('/light-activation/:id', authenticateUser, upload.single('image'), async (req, res) => {
+  const { id } = req.params;
+  const { title, goal, duration, best_time, steps } = req.body;
+  let image_url;
+
+  if (req.file) {
+    const ext = path.extname(req.file.originalname);
+    const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}${ext}`;
+    const filePath = `light_activation/${fileName}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from('light-activation-images')
+      .upload(filePath, req.file.buffer, {
+        contentType: req.file.mimetype,
+        upsert: false
+      });
+
+    if (uploadError) {
+      return res.status(500).json({ message: 'Erro ao salvar imagem' });
+    }
+
+    const { data } = supabase.storage.from('light-activation-images').getPublicUrl(filePath);
+    image_url = data.publicUrl;
+  }
+
+  const updatePayload = {
+    ...(title && { title }),
+    ...(goal && { goal }),
+    ...(duration && { duration }),
+    ...(best_time && { best_time }),
+    ...(steps && { steps }),
+    ...(image_url && { image_url })
+  };
+
+  const { error } = await supabase
+    .from('light_activation')
+    .update(updatePayload)
+    .eq('id', id);
+
+  if (error) return res.status(500).json({ message: 'Erro ao atualizar' });
+
+  return res.status(200).json({ message: 'Atualizado com sucesso' });
+});
+
+// DELETE - excluir por ID
+app.delete('/light-activation/:id', authenticateUser, async (req, res) => {
+  const { id } = req.params;
+
+  const { data: item, error: fetchError } = await supabase
+    .from('light_activation')
+    .select('image_url')
+    .eq('id', id)
+    .single();
+
+  if (fetchError) return res.status(404).json({ message: 'Item não encontrado' });
+
+  const { error: deleteError } = await supabase
+    .from('light_activation')
+    .delete()
+    .eq('id', id);
+
+  if (deleteError) return res.status(500).json({ message: 'Erro ao deletar' });
+
+  if (item?.image_url) {
+    const relativePath = item.image_url.split('/storage/v1/object/public/light-activation-images/')[1];
+    if (relativePath) {
+      await supabase.storage.from('light-activation-images').remove([`light_activation/${relativePath}`]);
+    }
+  }
+
+  return res.status(200).json({ message: 'Item deletado com sucesso' });
+});
