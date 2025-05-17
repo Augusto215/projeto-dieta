@@ -41,7 +41,7 @@ app.post('/api/login', async (req, res) => {
   console.log('[LOGIN] Tentativa de login via tabela users (sem senha)');
 
   if (!email) {
-    return res.status(400).json({ error: 'Email é obrigatório' });
+    return res.status(400).json({ error: 'Email is necessary' });
   }
 
   const { data: user, error } = await supabase
@@ -51,8 +51,8 @@ app.post('/api/login', async (req, res) => {
     .single();
 
   if (error || !user) {
-    console.warn('[LOGIN] Usuário não encontrado');
-    return res.status(401).json({ error: 'Usuário não encontrado' });
+    console.warn('[LOGIN] User not found');
+    return res.status(401).json({ error: 'User not found' });
   }
 
   const fakeToken = user.id;
@@ -1114,7 +1114,7 @@ app.get('/api/progress-level', authenticateUser, async (req, res) => {
 
     if (error || !user) {
       console.error('[PROGRESS] Erro ao buscar data de criação:', error?.message);
-      return res.status(404).json({ message: 'Usuário não encontrado' });
+      return res.status(404).json({ message: 'User not found' });
     }
 
     const createdAt = new Date(user.created_at);
