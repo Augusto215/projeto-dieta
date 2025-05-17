@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PLANA App - Admin Dashboard</title>
     <!-- Bootstrap CSS -->
+         <link rel="icon" type="image/x-icon" href="assets/img/69c26357-5c6f-4f2b-8812-6eeb56df9c42.ico">
+
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.1/font/bootstrap-icons.min.css" rel="stylesheet">
@@ -1570,7 +1572,7 @@
         data.forEach(entry => {
           const tr = document.createElement('tr');
           tr.innerHTML = `
-            <td><img src="${entry.image_url || '/api/placeholder/60/60'}" width="60" height="60" class="rounded"/></td>
+            <td><img style="object-fit:cover;" src="${entry.image_url || '/api/placeholder/60/60'}" width="60" height="60" class="rounded"/></td>
             <td>${entry.title}</td>
             <td>${entry.text}</td>
             <td>${entry.references_text || ''}</td>
@@ -1701,7 +1703,7 @@ async function submitGlucoseEdit() {
     data.forEach(entry => {
       const row = document.createElement('tr');
       row.innerHTML = `
-        <td><img src="${entry.image_url || '/api/placeholder/60/60'}" class="rounded" width="60" height="60" alt="Image"></td>
+        <td><img style="objecit-cover;" src="${entry.image_url || '/api/placeholder/60/60'}" class="rounded" width="60" height="60" alt="Image"></td>
         <td>${entry.title}</td>
         <td>${entry.goal || '-'}</td>
         <td>${entry.duration || '-'}</td>
@@ -1832,6 +1834,16 @@ async function submitLightActivationEdit() {
   }
 }
 
+fetch('/api/home')
+  .then(async (res) => {
+    if (res.status === 401) {
+      window.location.href = '/'; // ou '/login'
+      return;
+    }
+    const data = await res.json();
+    // segue uso normal
+  })
+  .catch(err => console.error('Erro na requisição:', err));
 </script>
 </body>
 </html>

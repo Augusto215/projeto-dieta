@@ -1,327 +1,623 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fitness Tracker</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            background-color: #f8f9fa;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Progress</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="assets/img/69c26357-5c6f-4f2b-8812-6eeb56df9c42.ico">
+
+  <style>
+    :root {
+      --warm-sand: #F1EAE3;
+      --deep-graphite: #2B2B2B;
+      --dark-teal: #4A6A68;
+      --coral-ember: #E26D5A;
+      --dusty-peach: #D8B7A6;
+    }
+
+    body {
+      background-color: #f8f9fa;
+      font-family: 'Space Grotesk', sans-serif;
+    }
+    .tracker-container {
+      max-width: 400px;
+      margin: 0 auto;
+      background-color: #f8f9fa;
+      padding-bottom: 80px;
+    }
+    .header {
+      padding: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #eee;
+    }
+    .header h1 {
+      font-size: 18px;
+      font-weight: 600;
+      margin: 0;
+    }
+    .profile-icon {
+      width: 36px;
+      height: 36px;
+      background-color: #ddd;
+      border-radius: 50%;
+    }
+    .card {
+      border-radius: 16px;
+      border: none;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      margin-bottom: 16px;
+      background-color: white;
+    }
+    .card-body {
+      padding: 20px;
+      position: relative;
+    }
+    .card-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+    }
+    .card-subtitle {
+      color: #adb5bd;
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+    .stats {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .distance {
+      margin-top: 12px;
+    }
+    .progress-circle {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      width: 100px;
+      height: 100px;
+    }
+    .circle-bg {
+      fill: none;
+      stroke: #eee;
+      stroke-width: 10;
+    }
+    .circle {
+      fill: none;
+      stroke: #4CAF50;
+      stroke-width: 10;
+      stroke-linecap: round;
+      transform: rotate(-90deg);
+      transform-origin: 50% 50%;
+      transition: stroke-dashoffset 0.3s;
+    }
+    .percentage {
+      font-size: 18px;
+      font-weight: 600;
+      fill: #4CAF50;
+    }
+    .weight-chart {
+      margin-top: 30px;
+      position: relative;
+      height: 150px;
+    }
+    .weight-scale {
+      position: absolute;
+      right: 0;
+      top: 0;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      font-size: 12px;
+      color: #adb5bd;
+    }
+    .target-weight {
+      position: absolute;
+      left: 0;
+      bottom: 30px;
+      background-color: #e9f7eb;
+      color: #4CAF50;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+    .target-line {
+      position: absolute;
+      left: 70px;
+      right: 25px;
+      bottom: 40px;
+      border-top: 1px dashed #4CAF50;
+    }
+    .date-markers {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 10px;
+      padding: 0 20px 0 0;
+      color: #adb5bd;
+      font-size: 12px;
+    }
+    .log-button {
+      border: 1px solid #dee2e6;
+      border-radius: 30px;
+      padding: 12px;
+      width: 100%;
+      text-align: center;
+      font-weight: 500;
+      margin-top: 20px;
+      background-color: white;
+    }
+
+    /* Nav Tabs */
+    .nav-tabs {
+      display: flex;
+      border-bottom: 1px solid #dee2e6;
+      margin-bottom: 20px;
+    }
+    .nav-tab {
+      flex: 1;
+      text-align: center;
+      padding: 10px 0;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .nav-tab.active {
+      color: var(--coral-ember);
+      border-bottom: 2px solid var(--coral-ember);
+    }
+
+    /* Activity Cards */
+    .activity-card {
+      background-color: white;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    }
+    .activity-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    .activity-icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 12px;
+      background-color: #e8f3ff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 15px;
+      color: #4A6A68;
+      font-size: 24px;
+    }
+    .activity-title {
+      margin: 0;
+      font-weight: 600;
+      font-size: 18px;
+    }
+    .activity-description {
+      color: #666;
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+    .activity-stats {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .stat-item {
+      text-align: center;
+      flex: 1;
+    }
+    .stat-value {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--dark-teal);
+    }
+    .stat-label {
+      font-size: 12px;
+      color: #888;
+    }
+    .activity-progress {
+      height: 8px;
+      background-color: #eee;
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 15px;
+    }
+    .progress-bar {
+      height: 100%;
+      background-color: var(--coral-ember);
+      border-radius: 4px;
+    }
+                    /* Active navigation item */
+                    .move svg {
+            fill: #e94057;
         }
-        
-        .tracker-container {
-            max-width: 400px;
-            margin: 0 auto;
-            background-color: #f8f9fa;
-        }
-        
-        .header {
-            padding: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #eee;
-        }
-        
-        .header h1 {
-            font-size: 18px;
-            font-weight: 600;
-            margin: 0;
-        }
-        
-        .profile-icon {
-            width: 36px;
-            height: 36px;
-            background-color: #ddd;
-            border-radius: 50%;
-        }
-        
-        .card {
-            border-radius: 16px;
-            border: none;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            margin-bottom: 16px;
-            background-color: white;
-        }
-        
-        .card-body {
-            padding: 20px;
-            position: relative;
-        }
-        
-        .card-title {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 8px;
-            display: flex;
-            justify-content: space-between;
-        }
-        
-        .card-subtitle {
-            color: #adb5bd;
-            font-size: 14px;
-            margin-bottom: 4px;
-        }
-        
-        .stats {
-            font-size: 24px;
-            font-weight: 700;
-            margin-bottom: 8px;
-        }
-        
-        .distance {
-            margin-top: 12px;
-        }
-        
-        .arrow-icon {
-            color: #dee2e6;
-        }
-        
-        .progress-circle {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            width: 100px;
-            height: 100px;
-        }
-        
-        .circle-bg {
-            fill: none;
-            stroke: #eee;
-            stroke-width: 10;
-        }
-        
-        .circle {
-            fill: none;
-            stroke: #4CAF50;
-            stroke-width: 10;
-            stroke-linecap: round;
-            transform: rotate(-90deg);
-            transform-origin: 50% 50%;
-            transition: stroke-dashoffset 0.3s;
-        }
-        
-        .percentage {
-            font-size: 18px;
-            font-weight: 600;
-            fill: #4CAF50;
-        }
-        
-        .weight-tag {
-            background-color: #4CAF50;
-            color: white;
-            padding: 4px 8px;
-            border-radius: 6px;
-            font-size: 14px;
+
+        .move div {
+            color: #e94057 !important;
             font-weight: 500;
-            position: absolute;
-            top: 30px;
-            right: 90px;
         }
-        
-        .weight-pin {
-            position: absolute;
-            top: 48px;
-            right: 105px;
-            width: 2px;
-            height: 10px;
-            background-color: #4CAF50;
+        .move span {
+            color: #e94057;
+
         }
-        
-        .weight-pin:after {
-            content: "";
-            position: absolute;
-            bottom: -5px;
-            left: -4px;
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            border: 2px solid #4CAF50;
-            background-color: white;
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: #888;
+    }
+    .badge-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 15px;
+    }
+    .badge-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: calc(33.333% - 8px);
+    }
+    .badge-icon {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background-color: #f5f5f5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 8px;
+      font-size: 24px;
+      color: #adb5bd;
+    }
+    .badge-icon.earned {
+      background-color: #e9f7eb;
+      color: #4CAF50;
+    }
+    .badge-name {
+      font-size: 12px;
+      text-align: center;
+      color: #666;
+    }
+    .badge-name.earned {
+      font-weight: 500;
+      color: #333;
+    }
+    .challenges-container {
+      background-color: white;
+      border-radius: 16px;
+      padding: 30px 20px;
+      text-align: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    .coming-soon {
+      font-size: 18px;
+      font-weight: 600;
+      color: #adb5bd;
+      margin: 15px 0;
+    }
+    .building-icon {
+      font-size: 48px;
+      color: #dee2e6;
+      margin-bottom: 15px;
+    }
+
+    /* Navigation Bar Styles */
+    .fixed-bottom {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 1030;
+    }
+    .bg-white {
+      background-color: white;
+    }
+    .border-top {
+      border-top: 1px solid #dee2e6;
+    }
+    .d-flex {
+      display: flex;
+    }
+    .justify-content-around {
+      justify-content: space-around;
+    }
+    .py-2 {
+      padding-top: 0.5rem;
+      padding-bottom: 0.5rem;
+    }
+    .nav-item {
+      text-align: center;
+      cursor: pointer;
+    }
+    .nav-item svg {
+      margin-bottom: 2px;
+    }
+    .nav-item div {
+      font-size: 12px;
+      color: #adb5bd;
+    }
+    .nav-item:nth-child(2) svg {
+      fill: #e94057;
+    }
+    .nav-item:nth-child(2) div {
+      color: #e94057;
+      font-weight: 500;
+    }
+
+             /* Active navigation item */
+             .progress svg {
+            fill: #e94057;
         }
-        
-        .weight-chart {
-            margin-top: 30px;
-            position: relative;
-            height: 150px;
-        }
-        
-        .weight-scale {
-            position: absolute;
-            right: 0;
-            top: 0;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            font-size: 12px;
-            color: #adb5bd;
-        }
-        
-        .target-weight {
-            position: absolute;
-            left: 0;
-            bottom: 30px;
-            background-color: #e9f7eb;
-            color: #4CAF50;
-            padding: 4px 8px;
-            border-radius: 6px;
-            font-size: 14px;
-        }
-        
-        .target-line {
-            position: absolute;
-            left: 70px;
-            right: 25px;
-            bottom: 40px;
-            border-top: 1px dashed #4CAF50;
-        }
-        
-        .month-label {
-            font-size: 12px;
-            color: #adb5bd;
-            background-color: #f1f3f5;
-            padding: 4px 8px;
-            border-radius: 12px;
-            display: inline-block;
-        }
-        
-        .date-markers {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 10px;
-            padding: 0 20px 0 0;
-            color: #adb5bd;
-            font-size: 12px;
-        }
-        
-        .log-button {
-            border: 1px solid #dee2e6;
-            border-radius: 30px;
-            padding: 12px;
-            width: 100%;
-            text-align: center;
+
+        .progress div {
+            color: #e94057 !important;
             font-weight: 500;
-            margin-top: 20px;
-            background-color: white;
         }
-    </style>
+        .progress span {
+            color: #e94057;
+
+        }
+
+  </style>
 </head>
 <body>
-    <div class="tracker-container">
-        <div class="header">
-            <h1>Trackers</h1>
-            <div class="profile-icon"></div>
+  <div class="tracker-container">
+    <div class="header">
+      <h1>Progress</h1>
+    </div>
+
+    <!-- Activity Tabs -->
+    <div class="nav-tabs">
+      <div class="nav-tab active" data-target="progress">Small Wins</div>
+      <div class="nav-tab" data-target="challenges">Challenges</div>
+    </div>
+
+    <!-- Progress Content -->
+    <div id="progress" class="activity-content">
+      <!-- Progress Level Card (Loaded via JS) -->
+      <div id="progress-level-container"></div>
+
+      <!-- Steps Card -->
+      <div class="card d-none">
+        <div class="card-body">
+          <div class="card-title">Daily Steps</div>
+          <div class="card-subtitle">Today's progress:</div>
+          <div class="stats">6,824</div>
+          <div class="card-subtitle">Goal: 10,000 steps</div>
+          
+          <svg class="progress-circle" viewBox="0 0 100 100">
+            <circle class="circle-bg" cx="50" cy="50" r="45"></circle>
+            <circle class="circle" cx="50" cy="50" r="45" stroke-dasharray="283" stroke-dashoffset="65"></circle>
+            <text class="percentage" x="50" y="55" text-anchor="middle">68%</text>
+          </svg>
+          
+          <div class="distance">
+            <div class="card-subtitle">Distance</div>
+            <div style="font-size: 18px; font-weight: 600;">4.7 km</div>
+          </div>
+          
+          <button class="log-button">
+            Log Steps Manually
+          </button>
         </div>
-        
-        <div class="container py-3">
-            <!-- Steps Card -->
-            <div class="card">
-                <div class="card-body">
-                    <div class="card-title">
-                        Steps
-                        <span class="arrow-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                                <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/>
-                            </svg>
-                        </span>
-                    </div>
-                    <div class="card-subtitle">Today</div>
-                    <div class="stats">2592/7000</div>
-                    <div class="card-subtitle distance">Distance</div>
-                    <div class="stats">1.09 MI</div>
-                    
-                    <div class="progress-circle">
-                        <svg width="100" height="100" viewBox="0 0 100 100">
-                            <circle class="circle-bg" cx="50" cy="50" r="45"></circle>
-                            <circle class="circle" cx="50" cy="50" r="45" stroke-dasharray="283" stroke-dashoffset="178"></circle>
-                            <text class="percentage" x="50" y="55" text-anchor="middle">37%</text>
-                        </svg>
-                    </div>
-                </div>
+      </div>
+
+      <!-- Badges Card -->
+      <div class="card d-none">
+        <div class="card-body">
+          <div class="card-title">Earned Badges</div>
+          <div class="card-subtitle">5 of 15 badges collected</div>
+          
+          <div class="badge-container">
+            <div class="badge-item">
+              <div class="badge-icon earned">
+                <i class="fas fa-fire"></i>
+              </div>
+              <div class="badge-name earned">First Burn</div>
+            </div>
+            <div class="badge-item">
+              <div class="badge-icon earned">
+                <i class="fas fa-walking"></i>
+              </div>
+              <div class="badge-name earned">Walker</div>
+            </div>
+            <div class="badge-item">
+              <div class="badge-icon earned">
+                <i class="fas fa-medal"></i>
+              </div>
+              <div class="badge-name earned">Early Bird</div>
+            </div>
+            <div class="badge-item">
+              <div class="badge-icon earned">
+                <i class="fas fa-dumbbell"></i>
+              </div>
+              <div class="badge-name earned">Strength</div>
+            </div>
+            <div class="badge-item">
+              <div class="badge-icon earned">
+                <i class="fas fa-calendar-check"></i>
+              </div>
+              <div class="badge-name earned">7-Day Streak</div>
+            </div>
+            <div class="badge-item">
+              <div class="badge-icon">
+                <i class="fas fa-mountain"></i>
+              </div>
+              <div class="badge-name">Climber</div>
+            </div>
+          </div>
+          
+          <button class="log-button">
+            View All Badges
+          </button>
+        </div>
+      </div>
+
+      <!-- Weight Tracker Card -->
+      <div class="card d-none">
+        <div class="card-body">
+          <div class="card-title">Weight Tracker</div>
+          <div class="card-subtitle">Current</div>
+          <div class="stats">68.5 kg</div>
+          <div class="card-subtitle">Lost 2.3 kg since start</div>
+          
+          <div class="weight-chart">
+            <div class="weight-scale">
+              <span>73 kg</span>
+              <span>70 kg</span>
+              <span>67 kg</span>
+              <span>64 kg</span>
             </div>
             
-            <!-- Weight Card -->
-            <div class="card">
-                <div class="card-body">
-                    <div class="card-title">
-                        Weight
-                        <span class="arrow-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                                <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/>
-                            </svg>
-                        </span>
-                    </div>
-                    
-                    <div class="month-label">April</div>
-                    
-                    <div class="weight-chart">
-                        <div class="weight-tag">200 lbs</div>
-                        <div class="weight-pin"></div>
-                        
-                        <div class="weight-scale">
-                            <div>200</div>
-                            <div>190</div>
-                            <div>180</div>
-                            <div>170</div>
-                            <div>160</div>
-                            <div>150</div>
-                        </div>
-                        
-                        <div class="target-weight">150 lbs</div>
-                        <div class="target-line"></div>
-                    </div>
-                    
-                    <div class="date-markers">
-                        <div>7</div>
-                        <div>14</div>
-                        <div>21</div>
-                        <div>28</div>
-                    </div>
-                    
-                    <button class="log-button">Log weight</button>
+            <div class="target-weight">Target: 65 kg</div>
+            <div class="target-line"></div>
+            
+            <svg width="100%" height="100%" style="position: absolute; top: 0; left: 0;">
+              <polyline
+                points="0,70 30,68 60,70 90,67 120,69 150,66"
+                style="fill:none;stroke:#E26D5A;stroke-width:2"
+              />
+              <circle cx="150" cy="66" r="4" fill="#E26D5A" />
+            </svg>
+          </div>
+          
+          <div class="date-markers">
+            <span>12 Apr</span>
+            <span>19 Apr</span>
+            <span>26 Apr</span>
+            <span>3 May</span>
+            <span>10 May</span>
+            <span>Today</span>
+          </div>
+          
+          <button class="log-button">
+            Log Today's Weight
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Challenges Content (Hidden by default) -->
+    <div id="challenges" class="activity-content" style="display: none;">
+      <div class="challenges-container">
+        <div class="building-icon">
+          <i class="fas fa-hard-hat"></i>
+        </div>
+        <div class="coming-soon">Building Challenges</div>
+        <p>We're designing exciting fitness challenges for you. Check back soon to test your limits and earn special rewards!</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="fixed-bottom bg-white border-top">
+    <div class="d-flex justify-content-around py-2">
+        <a href="/home" style="color: #adb5bd; text-decoration: none;">
+        <div class="nav-item text-center">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#adb5bd" viewBox="0 0 24 24">
+                <path d="M21 13v10h-6v-6h-6v6h-6v-10h-3l12-12 12 12h-3zm-1-5.907v-5.093h-3v2.093l3 3z"/>
+            </svg>
+            <div>My plan</div>
+        </div>
+        </a>
+        <a href="/move"  style="color: #adb5bd; text-decoration: none;">
+            <div class="nav-item text-center">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#adb5bd" viewBox="0 0 640 512">
+                <path d="M320 96a64 64 0 1 0 0-128 64 64 0 1 0 0 128zm80 160h-64l-32-64H192l-8 64h48l-22.4 160H128v64h128c15.7 0 29-11.6 31.6-27.1l25.5-182.9H368l-8 64h48l8-64h64v-64H400z"/>
+              </svg>
+              <div>Move</div>
+            </div>
+          </a>
+      </a>
+      <a href="/progress" class="move"  style="color: #adb5bd; text-decoration: none;">
+   
+        <div class="nav-item text-center">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#adb5bd" viewBox="0 0 24 24">
+                <path d="M12,20A8,8 0 1,1 20,12A8,8 0 0,1 12,20M12,2A10,10 0 1,0 22,12A10,10 0 0,0 12,2M12.5,7H11V13L16.25,16.15L17,14.92L12.5,12.25V7Z" />
+              </svg>
+              <div>Progress</div>
+        </div>
+            </a>
+            <a href="/learn-more" class="learn-more" style="color: #adb5bd; text-decoration: none;">
+    
+                <div class="nav-item text-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#adb5bd" viewBox="0 0 24 24">
+                    <path d="M21 4H12V20H21V4M3 6V20H11V6H3M21 2C22.1 2 23 2.9 23 4V20C23 21.1 22.1 22 21 22H12V20H21V4H12V2H21M11 2V4H3C1.9 4 1 4.9 1 6V20C1 21.1 1.9 22 3 22H12V20H3V6H11V2Z"/>
+                  </svg>
+                    <div>Learn</div>
                 </div>
+            </a>
             </div>
-        </div>
     </div>
 
 
-     <!-- Navigation Bar -->
-     <div class="fixed-bottom bg-white border-top">
-        <div class="d-flex justify-content-around py-2">
-            <div class="nav-item text-center">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#adb5bd" viewBox="0 0 24 24">
-                    <path d="M21 13v10h-6v-6h-6v6h-6v-10h-3l12-12 12 12h-3zm-1-5.907v-5.093h-3v2.093l3 3z"/>
-                </svg>
-                <div style="font-size: 12px; color: #adb5bd;">My plan</div>
-            </div>
-            <div class="nav-item text-center">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#e94057" viewBox="0 0 24 24">
-                    <path d="M12 2c5.514 0 10 4.486 10 10s-4.486 10-10 10-10-4.486-10-10 4.486-10 10-10zm0-2c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm-1.834 9.686l-4.166.575 3.032 2.914-.74 4.139 3.708-1.982 3.708 1.983-.74-4.139 3.032-2.915-4.166-.575-1.834-3.784-1.834 3.784z"/>
-                </svg>
-                <div style="font-size: 12px; color: #e94057; font-weight: 500;">Trackers</div>
-            </div>
-            <div class="nav-item text-center">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#adb5bd" viewBox="0 0 24 24">
-                    <path d="M23.111 20.058l-4.977-4.977c.965-1.52 1.523-3.322 1.523-5.251 0-5.42-4.409-9.83-9.829-9.83-5.42 0-9.828 4.41-9.828 9.83s4.408 9.83 9.829 9.83c1.834 0 3.552-.505 5.022-1.383l5.021 5.021c2.144 2.141 5.384-1.096 3.239-3.24zm-20.064-10.228c0-3.739 3.043-6.782 6.782-6.782s6.782 3.042 6.782 6.782-3.043 6.782-6.782 6.782-6.782-3.043-6.782-6.782zm2.01-1.764c1.984-4.599 8.664-4.066 9.922.749-2.534-2.974-6.993-3.294-9.922-.749z"/>
-                </svg>
-                <div style="font-size: 12px; color: #adb5bd;">Explore</div>
-            </div>
-            <div class="nav-item text-center">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#adb5bd" viewBox="0 0 24 24">
-                    <path d="M12 0l-11 6v12.131l11 5.869 11-5.869v-12.066l-11-6.065zm7.91 6.646l-7.905 4.218-7.872-4.294 7.862-4.289 7.915 4.365zm-16.91 1.584l8 4.363v9.449l-8-4.261v-9.551zm18 0v9.609l-8 4.268v-9.521l8-4.356z"/>
-                </svg>
-                <div style="font-size: 12px; color: #adb5bd;">Challenges</div>
-            </div>
-        </div>
-    </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      const container = document.getElementById('progress-level-container');
 
+      try {
+        const res = await fetch('/api/progress-level');
+        const data = await res.json();
 
+        if (res.ok) {
+          const percent = Math.min(100, (data.daysActive / data.nextMilestone * 100).toFixed(1));
+          const card = `
+            <div class="card">
+              <div class="card-body">
+                <div class="card-title">Progress Level</div>
+                <div class="card-subtitle">You're at:</div>
+                <div class="stats">${data.level}</div>
+                <div class="card-subtitle">Active for ${data.daysActive} days</div>
+                <div class="progress mt-3">
+                  <div class="progress-bar bg-success" role="progressbar" style="width: ${percent}%" aria-valuenow="${data.daysActive}" aria-valuemin="0" aria-valuemax="${data.nextMilestone}"></div>
+                </div>
+                <small class="text-muted mt-1 d-block">Next milestone: ${data.nextMilestone} days</small>
+              </div>
+            </div>
+          `;
+          container.innerHTML = card;
+        }
+      } catch (err) {
+        console.error('Error fetching progress:', err);
+      }
+    });
 
-    <!-- Bootstrap JS Bundle with Popper -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    // JavaScript for tab switching
+    document.addEventListener('DOMContentLoaded', function() {
+      const tabs = document.querySelectorAll('.nav-tab');
+      
+      tabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+          // Remove active class from all tabs
+          tabs.forEach(t => t.classList.remove('active'));
+          
+          // Add active class to clicked tab
+          this.classList.add('active');
+          
+          // Hide all content sections
+          document.querySelectorAll('.activity-content').forEach(content => {
+            content.style.display = 'none';
+          });
+          
+          // Show the selected content
+          const targetId = this.getAttribute('data-target');
+          document.getElementById(targetId).style.display = 'block';
+        });
+      });
+    });
+  </script>
 </body>
 </html>

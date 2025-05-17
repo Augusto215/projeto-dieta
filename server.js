@@ -14,8 +14,8 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Initialize Supabase client
-const supabaseUrl = 'https://slixymwrmifwomrjqsbk.supabase.co';
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNsaXh5bXdybWlmd29tcmpxc2JrIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0MTQ0OTQ1OSwiZXhwIjoyMDU3MDI1NDU5fQ.Kb1oTxZGzr9yP12ywwtS7JwVhop0u0UOq8BoHSl-jjc';
+const supabaseUrl = 'https://difljtetgyclwspwvrex.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRpZmxqdGV0Z3ljbHdzcHd2cmV4Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0NDkwODMyMSwiZXhwIjoyMDYwNDg0MzIxfQ.ibx8RY0PpsMefl47r3JI1aKiXoui1h5l_fCUcfnPBXw';
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 // Middleware
@@ -34,159 +34,176 @@ const setAuthCookie = (res, token) => {
   });
 };
 
-// Login route
+const bcrypt = require('bcrypt'); // se for usar hash (opcional)
+
 app.post('/api/login', async (req, res) => {
-  try {
-    const { email, password } = req.body;
-    
-    // Validate input
-    if (!email || !password) {
-      return res.status(400).json({ error: 'Email and password are required' });
-    }
-    
-    // Authenticate with Supabase
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password
-    });
-    
-    if (error) {
-      return res.status(401).json({ error: error.message });
-    }
-    
-    // Set auth cookie
-    setAuthCookie(res, data.session.access_token);
-    
-    // Return success response
-    return res.status(200).json({ 
-      success: true, 
-      redirectUrl: '/home',
-      user: {
-        id: data.user.id,
-        email: data.user.email
-      }
-    });
-  } catch (err) {
-    console.error('Login error:', err);
-    return res.status(500).json({ error: 'An error occurred during login' });
+  const { email } = req.body;
+  console.log('[LOGIN] Tentativa de login via tabela users (sem senha)');
+
+  if (!email) {
+    return res.status(400).json({ error: 'Email é obrigatório' });
   }
+
+  const { data: user, error } = await supabase
+    .from('users')
+    .select('id, first_name, email')
+    .eq('email', email)
+    .single();
+
+  if (error || !user) {
+    console.warn('[LOGIN] Usuário não encontrado');
+    return res.status(401).json({ error: 'Usuário não encontrado' });
+  }
+
+  const fakeToken = user.id;
+
+  res.cookie('authToken', fakeToken, {
+    httpOnly: true,
+    secure: false, // Lembre-se de trocar pra true em produção
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+    sameSite: 'strict'
+  });
+
+  console.log('[LOGIN] Login autorizado para', email);
+
+  return res.status(200).json({
+    success: true,
+    redirectUrl: '/home',
+    user: {
+      id: user.id,
+      email: user.email,
+      name: user.first_name
+    }
+  });
 });
 
 // Signup route
 app.post('/api/signup', async (req, res) => {
   try {
     const { name, email, password } = req.body;
-    
-    // Validate input
+
     if (!name || !email || !password) {
       return res.status(400).json({ error: 'Name, email, and password are required' });
     }
-    
-    // Create user in Supabase
+
+    // Cria usuário com metadados
     const { data: authData, error: authError } = await supabase.auth.signUp({
       email,
       password,
       options: {
         data: {
-          full_name: name
+          full_name: name,
+          signup_date: new Date().toISOString()
         }
       }
     });
-    
+
     if (authError) {
       return res.status(400).json({ error: authError.message });
     }
-    
-    // Add user to profiles table
-    const { error: profileError } = await supabase
-      .from('profiles')
+
+    // Insere na tabela `users`
+    const { error: insertError } = await supabase
+      .from('users')
       .insert({
         id: authData.user.id,
-        full_name: name,
-        email: email,
+        first_name: name,
+        email,
         created_at: new Date()
       });
-    
-    if (profileError) {
-      console.error('Error creating profile:', profileError);
-      // Don't return error to client here, since auth user was created successfully
+
+    if (insertError) {
+      console.error('Erro ao inserir na tabela users:', insertError.message);
     }
-    
-    // Set auth cookie
+
+    // ⚠️ Verifica se já foi autenticado automaticamente
     if (authData.session) {
       setAuthCookie(res, authData.session.access_token);
+      return res.status(200).json({
+        success: true,
+        redirectUrl: '/home',
+        user: {
+          id: authData.user.id,
+          email: authData.user.email
+        }
+      });
+    } else {
+      // Caso precise verificar email antes de logar
+      return res.status(200).json({
+        success: true,
+        redirectUrl: '/home',
+      });
     }
-    
-    // Return success response
-    return res.status(200).json({ 
-      success: true, 
-      redirectUrl: '/home',
-      user: {
-        id: authData.user.id,
-        email: authData.user.email
-      }
-    });
+
   } catch (err) {
-    console.error('Signup error:', err);
-    return res.status(500).json({ error: 'An error occurred during signup' });
+    console.error('Signup error:', err.message);
+    return res.status(500).json({ error: 'Erro no cadastro' });
   }
 });
 
 // Logout route
 app.post('/api/logout', async (req, res) => {
   try {
-    // Clear auth cookie
+    // Limpa o cookie
     res.clearCookie('authToken');
-    
-    // Sign out from Supabase
+
+    // Invalida a sessão no Supabase
     const { error } = await supabase.auth.signOut();
-    
+
     if (error) {
       return res.status(500).json({ error: error.message });
     }
-    
+
     return res.status(200).json({ success: true, redirectUrl: '/' });
   } catch (err) {
-    console.error('Logout error:', err);
+    console.error('Logout error:', err.message);
     return res.status(500).json({ error: 'An error occurred during logout' });
   }
 });
 
+
 // Authentication middleware
 const authenticateUser = async (req, res, next) => {
-  const token = req.cookies.authToken;
-  
-  if (!token) {
-    return res.redirect('/');
-  }
-  
-  try {
-    // Verify token with Supabase
-    const { data, error } = await supabase.auth.getUser(token);
-    
-    if (error || !data.user) {
-      res.clearCookie('authToken');
-      return res.redirect('/');
-    }
-    
-    req.user = data.user;
-    next();
-  } catch (err) {
-    console.error('Auth error:', err);
+  const userId = req.cookies.authToken;
+
+  if (!userId) return res.redirect('/');
+
+  const { data: user, error } = await supabase
+    .from('users')
+    .select('id, email')
+    .eq('id', userId)
+    .single();
+
+  if (error || !user) {
     res.clearCookie('authToken');
     return res.redirect('/');
   }
+
+  req.user = user;
+  next();
 };
+
 
 // Protected route middleware
 app.get('/home', authenticateUser, (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index2.html'));
 });
 
-app.get('/admin', (req, res) => {
+app.get('/admin', authenticateUser, (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'painel.html'));
 });
 
+app.get('/move', authenticateUser, (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index3.html'));
+});
+
+app.get('/progress', authenticateUser, (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'painel2.html'));
+});
+
+app.get('/learn-more', authenticateUser, (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index5.html'));
+});
 
 
 
@@ -1083,4 +1100,46 @@ app.delete('/light-activation/:id', authenticateUser, async (req, res) => {
   }
 
   return res.status(200).json({ message: 'Item deletado com sucesso' });
+});
+
+app.get('/api/progress-level', authenticateUser, async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    const { data: user, error } = await supabase
+      .from('users')
+      .select('created_at')
+      .eq('id', userId)
+      .single();
+
+    if (error || !user) {
+      console.error('[PROGRESS] Erro ao buscar data de criação:', error?.message);
+      return res.status(404).json({ message: 'Usuário não encontrado' });
+    }
+
+    const createdAt = new Date(user.created_at);
+    const now = new Date();
+    const daysActive = Math.floor((now - createdAt) / (1000 * 60 * 60 * 24));
+
+    let level = 'Unranked';
+    if (daysActive >= 365) level = 'God Level';
+    else if (daysActive >= 90) level = 'Expert Level';
+    else if (daysActive >= 30) level = 'Warrior Level';
+    else if (daysActive >= 7) level = 'Newbie Level';
+
+    return res.status(200).json({
+      level,
+      daysActive,
+      nextMilestone: {
+        Newbie: 7,
+        Warrior: 30,
+        Expert: 90,
+        God: 365
+      }[level.split(' ')[0]] || 7
+    });
+
+  } catch (err) {
+    console.error('[PROGRESS] Erro inesperado:', err.message);
+    return res.status(500).json({ message: 'Erro ao calcular progresso' });
+  }
 });
