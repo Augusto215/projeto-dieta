@@ -203,6 +203,18 @@
                 <i class="bi bi-people"></i> <span>Light Activation</span>
             </a>
         </li>
+<!-- ADD THIS INSIDE THE NAVIGATION MENU (sidebar) -->
+<li class="nav-item">
+  <a href="#" class="nav-link" data-bs-toggle="tab" data-bs-target="#learn-more">
+      <i class="bi bi-journal-text"></i> <span>Learn More</span>
+  </a>
+</li>
+<li class="nav-item">
+  <a href="#" class="nav-link" data-bs-toggle="tab" data-bs-target="#science">
+      <i class="bi bi-flask"></i> <span>Science</span>
+  </a>
+</li>
+
         </ul>
         <hr>
         <div class="dropdown">
@@ -805,7 +817,78 @@
                     </div>
                 </div>
             </div>
-            
+            <!-- ADD THIS INSIDE THE MAIN TAB CONTENT AREA -->
+<div class="tab-pane fade" id="learn-more">
+  <div class="container-fluid">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+          <h1 class="page-title">Manage Learn More</h1>
+          <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addLearnMoreModal">
+              <i class="bi bi-plus-circle"></i> New Entry
+          </button>
+      </div>
+      <div class="card">
+          <div class="card-header">
+              <h5 class="mb-0">Entries</h5>
+          </div>
+          <div class="card-body">
+              <div class="table-responsive">
+                  <table class="table table-hover">
+                      <thead>
+                          <tr>
+                              <th>Image</th>
+                              <th>Title</th>
+                              <th>Description</th>
+                              <th>References</th>
+                              <th>Date</th>
+                              <th>Actions</th>
+                          </tr>
+                      </thead>
+                      <tbody id="learnMoreEntries">
+                          <!-- Filled via JS -->
+                      </tbody>
+                  </table>
+              </div>
+          </div>
+      </div>
+  </div>
+</div>
+
+<!-- Science Tab -->
+<div class="tab-pane fade" id="science">
+  <div class="container-fluid">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+          <h1 class="page-title">Manage Science</h1>
+          <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addScienceModal">
+              <i class="bi bi-plus-circle"></i> New Entry
+          </button>
+      </div>
+      <div class="card">
+          <div class="card-header">
+              <h5 class="mb-0">Entries</h5>
+          </div>
+          <div class="card-body">
+              <div class="table-responsive">
+                  <table class="table table-hover">
+                      <thead>
+                          <tr>
+                              <th>Image</th>
+                              <th>Title</th>
+                              <th>Description</th>
+                              <th>References</th>
+                              <th>Date</th>
+                              <th>Actions</th>
+                          </tr>
+                      </thead>
+                      <tbody id="scienceEntries">
+                          <!-- Filled via JS -->
+                      </tbody>
+                  </table>
+              </div>
+          </div>
+      </div>
+  </div>
+</div>
+
             <!-- Articles Tab -->
             <div class="tab-pane fade" id="articles">
                 <div class="container-fluid">
@@ -1137,7 +1220,41 @@
                 </div>
             </div>
             <!-- Glucose Walk Tab -->
-
+            <div class="tab-pane fade" id="science">
+              <div class="container-fluid">
+                  <div class="d-flex justify-content-between align-items-center mb-4">
+                      <h1 class="page-title">Manage Science</h1>
+                      <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addScienceModal">
+                          <i class="bi bi-plus-circle"></i> New Entry
+                      </button>
+                  </div>
+                  <div class="card">
+                      <div class="card-header">
+                          <h5 class="mb-0">Entries</h5>
+                      </div>
+                      <div class="card-body">
+                          <div class="table-responsive">
+                              <table class="table table-hover">
+                                  <thead>
+                                      <tr>
+                                          <th>Image</th>
+                                          <th>Title</th>
+                                          <th>Description</th>
+                                          <th>References</th>
+                                          <th>Date</th>
+                                          <th>Actions</th>
+                                      </tr>
+                                  </thead>
+                                  <tbody id="scienceEntries">
+                                      <!-- Filled via JS -->
+                                  </tbody>
+                              </table>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+          
     <!-- Light Activation Tab -->
 <div class="tab-pane fade" id="light-activation">
     <div class="container-fluid">
@@ -1323,6 +1440,151 @@
           </div>
         </div>
       </div>
+      
+      <div class="modal fade" id="addLearnMoreModal" tabindex="-1" aria-labelledby="addLearnMoreModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="addLearnMoreModalLabel">Add New Learn More Entry</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <form id="learnMoreForm">
+                <div class="mb-3">
+                  <label for="learnTitle" class="form-label">Title</label>
+                  <input type="text" class="form-control" id="learnTitle" name="title" required>
+                </div>
+                <div class="mb-3">
+                  <label for="learnDescription" class="form-label">Description</label>
+                  <textarea class="form-control" id="learnDescription" name="description" rows="3"></textarea>
+                </div>
+                <div class="mb-3">
+                  <label for="learnReferences" class="form-label">References</label>
+                  <textarea class="form-control" id="learnReferences" name="references" rows="3"></textarea>
+                </div>
+                <div class="mb-3">
+                  <label for="learnImage" class="form-label">Image</label>
+                  <input type="file" class="form-control" id="learnImage" name="image" accept="image/*">
+                </div>
+              </form>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+              <button type="button" class="btn btn-primary" onclick="submitLearnMore()">Save Entry</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="modal fade" id="addScienceModal" tabindex="-1" aria-labelledby="addScienceModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="addScienceModalLabel">Add New Science Entry</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <form id="scienceForm">
+                <div class="mb-3">
+                  <label for="scienceTitle" class="form-label">Title</label>
+                  <input type="text" class="form-control" id="scienceTitle" name="title" required>
+                </div>
+                <div class="mb-3">
+                  <label for="scienceDescription" class="form-label">Description</label>
+                  <textarea class="form-control" id="scienceDescription" name="description" rows="3"></textarea>
+                </div>
+                <div class="mb-3">
+                  <label for="scienceReferences" class="form-label">References</label>
+                  <textarea class="form-control" id="scienceReferences" name="references" rows="3"></textarea>
+                </div>
+                <div class="mb-3">
+                  <label for="scienceImage" class="form-label">Image</label>
+                  <input type="file" class="form-control" id="scienceImage" name="image" accept="image/*">
+                </div>
+              </form>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+              <button type="button" class="btn btn-primary" onclick="submitScienceEntry()">Save Entry</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Edit Science Modal -->
+<div class="modal fade" id="editScienceModal" tabindex="-1" aria-labelledby="editScienceModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editScienceModalLabel">Edit Science Entry</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="editScienceForm">
+          <input type="hidden" id="editScienceId">
+          <div class="mb-3">
+            <label for="editScienceTitle" class="form-label">Title</label>
+            <input type="text" class="form-control" id="editScienceTitle" name="title" required>
+          </div>
+          <div class="mb-3">
+            <label for="editScienceDescription" class="form-label">Description</label>
+            <textarea class="form-control" id="editScienceDescription" name="description" rows="3" required></textarea>
+          </div>
+          <div class="mb-3">
+            <label for="editScienceReferences" class="form-label">References</label>
+            <textarea class="form-control" id="editScienceReferences" name="references_text" rows="3"></textarea>
+          </div>
+          <div class="mb-3 text-center">
+            <label class="form-label">Image</label>
+            <img id="editSciencePreview" src="/api/placeholder/120/120" class="thumbnail-preview mb-2" alt="Preview">
+            <input type="file" class="form-control" id="editScienceImage" name="image" accept="image/*">
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" onclick="submitScienceEdit()">Save Changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Edit Learn More Modal -->
+<div class="modal fade" id="editLearnMoreModal" tabindex="-1" aria-labelledby="editLearnMoreModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editLearnMoreModalLabel">Edit Learn More Entry</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="editLearnMoreForm">
+          <input type="hidden" id="editLearnId">
+          <div class="mb-3">
+            <label for="editLearnTitle" class="form-label">Title</label>
+            <input type="text" class="form-control" id="editLearnTitle" required>
+          </div>
+          <div class="mb-3">
+            <label for="editLearnDescription" class="form-label">Description</label>
+            <textarea class="form-control" id="editLearnDescription" rows="3"></textarea>
+          </div>
+          <div class="mb-3">
+            <label for="editLearnReferences" class="form-label">References</label>
+            <textarea class="form-control" id="editLearnReferences" rows="3"></textarea>
+          </div>
+          <div class="mb-3 text-center">
+            <label class="form-label">Image</label>
+            <img id="editLearnPreview" src="/api/placeholder/120/120" class="thumbnail-preview mb-2" alt="Preview">
+            <input type="file" class="form-control" id="editLearnImage" accept="image/*">
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" onclick="submitLearnMoreEdit()">Save Changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
       
 
     <!-- Bootstrap JS and dependencies -->
@@ -1844,6 +2106,392 @@ fetch('/api/home')
     // segue uso normal
   })
   .catch(err => console.error('Erro na requisição:', err));
+  
+</script>
+<script>
+
+
+async function deleteLearnMore(id) {
+  if (!confirm('Excluir esta entrada?')) return;
+  try {
+    const res = await fetch(`/learn-more/${id}`, { method: 'DELETE' });
+    if (res.ok) {
+      await loadLearnMoreEntries();
+    } else {
+      alert('Erro ao excluir entrada');
+    }
+  } catch (err) {
+    alert('Erro: ' + err.message);
+  }
+}
+
+async function loadLearnMoreEntries() {
+  console.log('[FETCH] Iniciando carregamento de Learn More...');
+
+  try {
+    const res = await fetch('/learn-more', {
+      method: 'GET',
+      credentials: 'include', // 🔥 ENVIA COOKIES de sessão
+      headers: {
+        'Accept': 'application/json'
+      }
+    });
+
+    console.log('[FETCH] Status da resposta:', res.status);
+
+    const contentType = res.headers.get('Content-Type') || '';
+    if (!contentType.includes('application/json')) {
+      const text = await res.text();
+      console.error('[ERROR] Resposta não é JSON. Conteúdo:', text);
+      throw new Error('Resposta não é JSON');
+    }
+
+    const data = await res.json();
+    console.log('[FETCH] Dados recebidos:', data);
+
+    const tbody = document.getElementById('learnMoreEntries');
+    tbody.innerHTML = '';
+
+    if (!Array.isArray(data)) {
+      console.warn('[WARN] Dados retornados não são um array.');
+      return;
+    }
+
+    data.forEach(entry => {
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td><img src="${entry.image_url || '/api/placeholder/60/60'}" width="60" height="60" class="rounded" /></td>
+        <td>${entry.title}</td>
+        <td>${entry.description || ''}</td>
+        <td>${entry.references || ''}</td>
+        <td>${new Date(entry.created_at).toLocaleDateString()}</td>
+        <td>
+          <button class="btn btn-sm btn-outline-secondary" onclick="editLearnMore('${entry.id}')"><i class="bi bi-pencil"></i></button>
+          <button class="btn btn-sm btn-outline-danger" onclick="deleteLearnMore('${entry.id}')"><i class="bi bi-trash"></i></button>
+        </td>
+      `;
+      tbody.appendChild(row);
+      console.log('[DOM] Linha adicionada:', entry.title);
+    });
+
+    console.log(`[SUCCESS] ${data.length} entradas renderizadas.`);
+
+  } catch (err) {
+    console.error('[ERROR] Falha ao carregar Learn More:', err);
+    alert('Erro ao carregar Learn More: ' + err.message);
+  }
+}
+
+async function deleteLearnMore(id) {
+  if (!confirm('Excluir esta entrada?')) return;
+  try {
+    const res = await fetch(`/learn-more/${id}`, { method: 'DELETE' });
+    if (res.ok) {
+      await loadLearnMoreEntries();
+    } else {
+      alert('Erro ao excluir entrada');
+    }
+  } catch (err) {
+    alert('Erro: ' + err.message);
+  }
+}
+
+async function submitLearnMore() {
+  const formData = new FormData();
+
+  formData.append('title', document.getElementById('learnTitle').value);
+  formData.append('description', document.getElementById('learnDescription').value);
+  formData.append('references_text', document.getElementById('learnReferences').value);
+
+  const imageInput = document.getElementById('learnImage');
+  if (imageInput.files.length > 0) {
+    formData.append('image', imageInput.files[0]);
+  }
+
+  try {
+    const res = await fetch('/learn-more', {
+      method: 'POST',
+      body: formData
+    });
+
+    const result = await res.json();
+
+    if (res.ok) {
+      alert('Learn More salvo com sucesso!');
+      bootstrap.Modal.getInstance(document.getElementById('addLearnMoreModal')).hide();
+      document.getElementById('learnMoreForm').reset();
+      loadLearnMoreEntries();
+    } else {
+      alert('Erro: ' + (result.message || 'Erro desconhecido'));
+    }
+  } catch (err) {
+    alert('Erro inesperado: ' + err.message);
+  }
+}
+
+async function submitScienceEntry() {
+  const formData = new FormData();
+
+  formData.append('title', document.getElementById('scienceTitle').value);
+  formData.append('description', document.getElementById('scienceDescription').value);
+  formData.append('references_text', document.getElementById('scienceReferences').value);
+
+  const imageInput = document.getElementById('scienceImage');
+  if (imageInput.files.length > 0) {
+    formData.append('image', imageInput.files[0]);
+  }
+
+  try {
+    const res = await fetch('/science', {
+      method: 'POST',
+      body: formData
+    });
+
+    const result = await res.json();
+
+    if (res.ok) {
+      alert('Science salvo com sucesso!');
+      bootstrap.Modal.getInstance(document.getElementById('addScienceModal')).hide();
+      document.getElementById('ScienceForm').reset();
+      loadLearnMoreEntries();
+    } else {
+      alert('Erro: ' + (result.message || 'Erro desconhecido'));
+    }
+  } catch (err) {
+    alert('Erro inesperado: ' + err.message);
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  // Se já estiver ativa no load
+  if (document.querySelector('.tab-pane#learn-more').classList.contains('active')) {
+    loadLearnMoreEntries();
+  }
+
+  document.querySelectorAll('[data-bs-toggle="tab"]').forEach(tab => {
+  tab.addEventListener('shown.bs.tab', (e) => {
+    const target = e.target.getAttribute('data-bs-target');
+    if (target === '#learn-more') {
+      loadLearnMoreEntries();
+    }
+  });
+});
+});
+document.addEventListener('DOMContentLoaded', () => {
+  if (document.querySelector('#learn-more').classList.contains('active')) {
+    loadLearnMoreEntries();
+  }
+});
+async function loadScienceEntries() {
+  try {
+    const res = await fetch('/science');
+    const data = await res.json();
+
+    if (!Array.isArray(data)) {
+      console.error('Resposta inválida:', data);
+      return;
+    }
+
+    const tbody = document.getElementById('scienceEntries');
+    tbody.innerHTML = '';
+
+    data.forEach(entry => {
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td><img src="${entry.image_url || '/api/placeholder/60/60'}" width="60" height="60" class="rounded" /></td>
+        <td>${entry.title}</td>
+        <td>${entry.description}</td>
+        <td>${entry.references_text || ''}</td>
+        <td>${new Date(entry.created_at).toLocaleDateString()}</td>
+        <td>
+          <button class="btn btn-sm btn-outline-secondary" onclick="editScienceEntry('${entry.id}')"><i class="bi bi-pencil"></i></button>
+          <button class="btn btn-sm btn-outline-danger" onclick="deleteScienceEntry('${entry.id}')"><i class="bi bi-trash"></i></button>
+        </td>
+      `;
+      tbody.appendChild(row);
+    });
+  } catch (err) {
+    alert('Erro ao carregar Science: ' + err.message);
+  }
+}
+
+// EDIT MODAL - Abrir com dados preenchidos
+async function editScienceEntry(id) {
+  try {
+    const res = await fetch(`/science/${id}`);
+    const entry = await res.json();
+
+    document.getElementById('scienceTitle').value = entry.title;
+    document.getElementById('scienceDescription').value = entry.description;
+    document.getElementById('scienceReferences').value = entry.references_text || '';
+    document.getElementById('scienceImage').value = '';
+    document.getElementById('sciencePreview').src = entry.image_url || '/api/placeholder/120/120';
+
+    document.getElementById('scienceForm').setAttribute('data-edit-id', id);
+    new bootstrap.Modal(document.getElementById('addScienceModal')).show();
+  } catch (err) {
+    alert('Erro ao buscar entrada: ' + err.message);
+  }
+}
+
+// PUT /science/:id - Atualizar
+async function submitScienceEdit() {
+  const id = document.getElementById('scienceForm').getAttribute('data-edit-id');
+  const formData = new FormData();
+
+  formData.append('title', document.getElementById('scienceTitle').value);
+  formData.append('description', document.getElementById('scienceDescription').value);
+  formData.append('references_text', document.getElementById('scienceReferences').value);
+
+  const imageInput = document.getElementById('scienceImage');
+  if (imageInput.files.length > 0) {
+    formData.append('image', imageInput.files[0]);
+  }
+
+  try {
+    const res = await fetch(`/science/${id}`, {
+      method: 'PUT',
+      body: formData
+    });
+
+    const result = await res.json();
+    if (res.ok) {
+      alert('Science atualizado com sucesso!');
+      bootstrap.Modal.getInstance(document.getElementById('addScienceModal')).hide();
+      loadScienceEntries();
+    } else {
+      alert('Erro ao atualizar: ' + (result.message || 'Erro desconhecido'));
+    }
+  } catch (err) {
+    alert('Erro inesperado: ' + err.message);
+  }
+}
+
+// Learn More - Abrir modal de edição com dados existentes
+async function editLearnMore(id) {
+  try {
+    const res = await fetch(`/learn-more/${id}`);
+    if (!res.ok) throw new Error('Não foi possível buscar os dados');
+
+    const entry = await res.json();
+
+    document.getElementById('editLearnId').value = entry.id;
+    document.getElementById('editLearnTitle').value = entry.title || '';
+    document.getElementById('editLearnDescription').value = entry.description || '';
+    document.getElementById('editLearnReferences').value = entry.references_text || '';
+    document.getElementById('editLearnPreview').src = entry.image_url || '/api/placeholder/120/120';
+
+    new bootstrap.Modal(document.getElementById('editLearnMoreModal')).show();
+  } catch (err) {
+    alert('Erro ao carregar entrada: ' + err.message);
+  }
+}
+
+// Learn More - Enviar PUT para atualizar entrada
+async function submitLearnMoreEdit() {
+  const id = document.getElementById('editLearnId').value;
+  const formData = new FormData();
+
+  formData.append('title', document.getElementById('editLearnTitle').value);
+  formData.append('description', document.getElementById('editLearnDescription').value);
+  formData.append('references_text', document.getElementById('editLearnReferences').value);
+
+  const imageInput = document.getElementById('editLearnImage');
+  if (imageInput.files.length > 0) {
+    formData.append('image', imageInput.files[0]);
+  }
+
+  try {
+    const res = await fetch(`/learn-more/${id}`, {
+      method: 'PUT',
+      body: formData
+    });
+
+    const result = await res.json();
+
+    if (res.ok) {
+      alert('Learn More atualizado com sucesso!');
+      bootstrap.Modal.getInstance(document.getElementById('editLearnMoreModal')).hide();
+      await loadLearnMoreEntries();
+    } else {
+      alert('Erro ao atualizar: ' + (result.message || 'Erro desconhecido'));
+    }
+  } catch (err) {
+    alert('Erro inesperado: ' + err.message);
+  }
+}
+
+
+loadScienceEntries()
+async function editScienceEntry(id) {
+  try {
+    const res = await fetch(`/science/${id}`);
+    if (!res.ok) throw new Error('Falha no fetch');
+
+    const entry = await res.json();
+
+    document.getElementById('editScienceId').value = entry.id;
+    document.getElementById('editScienceTitle').value = entry.title;
+    document.getElementById('editScienceDescription').value = entry.description;
+    document.getElementById('editScienceReferences').value = entry.references_text || '';
+    document.getElementById('editSciencePreview').src = entry.image_url || '/api/placeholder/120/120';
+
+    new bootstrap.Modal(document.getElementById('editScienceModal')).show();
+  } catch (err) {
+    alert('Erro ao carregar Science: ' + err.message);
+  }
+}
+
+async function submitScienceEdit() {
+  const id = document.getElementById('editScienceId').value;
+  const formData = new FormData();
+
+  formData.append('title', document.getElementById('editScienceTitle').value);
+  formData.append('description', document.getElementById('editScienceDescription').value);
+  formData.append('references_text', document.getElementById('editScienceReferences').value);
+
+  const image = document.getElementById('editScienceImage').files[0];
+  if (image) formData.append('image', image);
+
+  try {
+    const res = await fetch(`/science/${id}`, {
+      method: 'PUT',
+      body: formData
+    });
+    const result = await res.json();
+
+    if (res.ok) {
+      alert('Science atualizado com sucesso!');
+      bootstrap.Modal.getInstance(document.getElementById('editScienceModal')).hide();
+      loadScienceEntries(); // Certifique-se que essa função exista
+    } else {
+      alert('Erro ao atualizar: ' + (result.message || 'Erro desconhecido'));
+    }
+  } catch (err) {
+    alert('Erro inesperado: ' + err.message);
+  }
+}
+async function deleteScienceEntry(id) {
+  if (!confirm('Tem certeza que deseja excluir esta entrada de Science?')) return;
+
+  try {
+    const res = await fetch(`/science/${id}`, {
+      method: 'DELETE'
+    });
+
+    const result = await res.json();
+
+    if (res.ok) {
+      alert('Entrada de Science excluída com sucesso!');
+      await loadScienceEntries(); // recarrega a lista
+    } else {
+      alert('Erro ao excluir: ' + (result.message || 'Erro desconhecido'));
+    }
+  } catch (err) {
+    alert('Erro inesperado: ' + err.message);
+  }
+}
+
 </script>
 </body>
 </html>

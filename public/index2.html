@@ -598,7 +598,7 @@
           <div class="recipe-meta">${meal.meal_type} · ${meal.recipes.prep_time} min</div>
           <div class="action-buttons">
             <button class="btn btn-swap py-2" onclick="swapMeal('${meal.id}')">Swap</button>
-            <button class="btn btn-log py-2" onclick="logMeal('${meal.id}')">Log</button>
+            <button class="btn btn-log py-2" onclick="showRecipeModal(${JSON.stringify(meal.recipes).replace(/"/g, '&quot;')}, '${meal.meal_type}')">View</button>
           </div>
         </div>
       `;
@@ -614,6 +614,28 @@
   }
 }
     </script>
+
+    <!-- Recipe Details Modal -->
+<div class="modal fade" id="recipeModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="recipeModalTitle">Recipe Details</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+      </div>
+      <div class="modal-body">
+        <img id="recipeModalImage" src="" alt="" class="img-fluid mb-3 rounded" style="width:100%; object-fit: cover; height: 15rem;">
+        <p><strong>Meal type:</strong> <span id="recipeModalMealType"></span></p>
+        <p><strong>Preparation time:</strong> <span id="recipeModalPrepTime"></span> minutes</p>
+        <p><strong>Calories:</strong> <span id="recipeModalCalories"></span></p>
+        <p><strong>Ingredients:</strong></p>
+        <ul id="recipeModalIngredients"></ul>
+        <p><strong>Instructions:</strong></p>
+        <div id="recipeModalInstructions"></div>
+      </div>
+    </div>
+  </div>
+</div>
     <!-- Navigation Bar -->
     <div class="fixed-bottom bg-white border-top">
         <div class="d-flex justify-content-around py-2">
@@ -976,6 +998,41 @@ path.setAttribute('fill', result.favorited ? '#e94057' : '#adb5bd');
   })
   .catch(err => console.error('Erro na requisição:', err));
     
+  
     </script>
+    <script>
+      function showRecipeModal(recipe, mealType) {
+        document.getElementById('recipeModalTitle').innerText = recipe.title || 'Recipe Details';
+        document.getElementById('recipeModalImage').src = recipe.image_url || '';
+        document.getElementById('recipeModalMealType').innerText = mealType || 'N/A';
+        document.getElementById('recipeModalPrepTime').innerText = recipe.prep_time || 'N/A';
+        document.getElementById('recipeModalCalories').innerText = recipe.calories || 'N/A';
+    
+        // Parse ingredients
+        const ingredientsList = document.getElementById('recipeModalIngredients');
+        ingredientsList.innerHTML = '';
+        try {
+          const ingredients = JSON.parse(recipe.ingredients);
+          if (Array.isArray(ingredients)) {
+            ingredients.forEach(ing => {
+              const li = document.createElement('li');
+              li.textContent = ing;
+              ingredientsList.appendChild(li);
+            });
+          } else {
+            ingredientsList.innerHTML = `<li>${recipe.ingredients}</li>`;
+          }
+        } catch (e) {
+          ingredientsList.innerHTML = `<li>${recipe.ingredients}</li>`;
+        }
+    
+        // Instructions
+        document.getElementById('recipeModalInstructions').innerText = recipe.instructions || 'N/A';
+    
+        const modal = new bootstrap.Modal(document.getElementById('recipeModal'));
+        modal.show();
+      }
+    </script>
+    
 </body>
 </html>
