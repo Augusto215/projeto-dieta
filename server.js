@@ -201,7 +201,7 @@
     res.sendFile(path.join(__dirname, 'public', 'painel2.html'));
   });
 
-  app.get('/learn ', authenticateUser, (req, res) => {
+  app.get('/learn', authenticateUser, (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index5.html'));
   });
 

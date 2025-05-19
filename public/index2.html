@@ -84,7 +84,57 @@
             margin-right: 10px;
             cursor: pointer;
         }
+        .content-section {
+  transform: translateY(20px);
+  pointer-events: none;
+  transition: all 0.3s ease;
+  display: none;
+}
 
+/* Estado inicial de todas as seções */
+.content-section {
+  display: none;
+}
+
+/* Ativa com animação de entrada */
+.content-section.fade-in {
+  display: block;
+  z-index: 1;
+  pointer-events: auto;
+  animation: fadeSlideIn 0.3s ease forwards;
+}
+
+/* Ativa com animação de saída */
+.content-section.fade-out {
+  animation: fadeSlideOut 0.3s ease forwards;
+}
+
+/* Animação de entrada */
+@keyframes fadeSlideIn {
+  from {
+    transform: translateY(20px);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+/* Animação de saída */
+@keyframes fadeSlideOut {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(20px);
+  }
+}
+
+.content-section.active {
+  display: block;
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
         .date-day {
             font-size: 12px;
             color: #666;
@@ -459,7 +509,7 @@
           </div>
         <div class="date-selector" id="dateSelector"></div>
         <!-- Seção de Shopping List -->
-<div id="shoppingSection" class="content-section" style="display: none;">
+<div id="shoppingSection" class="content-section">
     <div class="container py-3">
       <div class="card shadow-sm">
         <div class="card-body">
@@ -536,13 +586,13 @@
         
 
 <!-- Seções por aba -->
-<div id="planSection" class="content-section">
-    <div class="container d-flex justify-content-center flex-column gap-3 py-4 mb-4" id="meal-container">
+<div id="planSection" class="content-section active">
+  <div class="container d-flex justify-content-center flex-column gap-3 py-4 mb-4" id="meal-container">
       <!-- Refeições carregadas dinamicamente aqui -->
     </div>
   </div>
   
-  <div id="shoppingSection" class="content-section" style="display: none;">
+  <div id="shoppingSection" class="content-section">
     <div class="container py-3" id="shopping-container">
       <div class="card shadow-sm">
         <div class="card-body">
@@ -556,7 +606,7 @@
     </div>
   </div>
   
-  <div id="favoritesSection" class="content-section" style="display: none;">
+  <div id="favoritesSection" class="content-section">
     <div class="container d-flex justify-content-center flex-column gap-3 py-4 mb-4" id="favorites-container">
       <!-- Favoritos carregados dinamicamente -->
     </div>
@@ -667,7 +717,7 @@
       <div>Progress</div>
     </div>
         </a>
-        <a href="/learn-more" style="color: #adb5bd; text-decoration: none;">
+        <a href="/learn" style="color: #adb5bd; text-decoration: none;">
 
             <div class="nav-item text-center">
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#adb5bd" viewBox="0 0 24 24">
@@ -719,85 +769,59 @@
     </script>
 
      <script>
-      document.addEventListener('DOMContentLoaded', function() {
-    // Tab switching
-    const tabs = document.querySelectorAll('.nav-tab');
-    
-    tabs.forEach(tab => {
-        tab.addEventListener('click', function() {
-            // Remove active class from all tabs
-            tabs.forEach(t => t.classList.remove('active'));
-            
-            // Add active class to clicked tab
-            this.classList.add('active');
-            
-            // Hide all content sections
-            document.querySelectorAll('.content-section').forEach(content => {
-                content.style.display = 'none';
-            });
-            
-            // Show the selected content
-            const targetId = this.getAttribute('data-target');
-            document.getElementById(targetId).style.display = 'block';
-        });
-    });
-    
-    // Level dots interaction
-    const levelDots = document.querySelectorAll('.level-dot');
-    levelDots.forEach(dot => {
-        dot.addEventListener('click', function() {
-            const metric = this.getAttribute('data-metric');
-            const level = this.getAttribute('data-level');
-            
-            // Remove active class from all dots in the same metric
-            document.querySelectorAll(`.level-dot[data-metric="${metric}"]`).forEach(d => {
-                d.classList.remove('active');
-            });
-            
-            // Add active class to clicked dot
-            this.classList.add('active');
-        });
-    });
-    
-    // Win checkboxes interaction
-    const checkboxes = document.querySelectorAll('.win-checkbox');
-    checkboxes.forEach(checkbox => {
-        checkbox.addEventListener('click', function() {
-            this.classList.toggle('checked');
-            
-            // Update level badges
-            updateLevelBadges();
-        });
-    });
-    
-    // Update level badges based on checked items
-    function updateLevelBadges() {
-        const levels = ['newbie', 'warrior', 'expert'];
-        
-        levels.forEach(level => {
-            const totalItems = document.querySelectorAll(`.win-checkbox[data-win^="${level}"]`).length;
-            const checkedItems = document.querySelectorAll(`.win-checkbox[data-win^="${level}"].checked`).length;
-            
-            // Update badge text
-            const badge = document.querySelector(`.win-level:contains('${level.charAt(0).toUpperCase() + level.slice(1)}') .win-level-badge`);
-            if (badge) {
-                badge.textContent = `${checkedItems}/${totalItems} completed`;
-            }
-        });
+document.addEventListener('DOMContentLoaded', function () {
+  const tabs = document.querySelectorAll('.nav-tab');
+  const sections = document.querySelectorAll('.content-section');
+  let currentSection = null;
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', function () {
+  const targetId = this.getAttribute('data-target');
+  const targetSection = document.getElementById(targetId);
+
+  // Troca visual da aba
+  tabs.forEach(t => t.classList.remove('active'));
+  this.classList.add('active');
+
+  // Esconde todas as seções
+  sections.forEach(section => {
+    section.classList.remove('fade-in', 'fade-out');
+    section.style.display = 'none';
+  });
+
+  // Mostra a seção desejada
+  targetSection.style.display = 'block';
+  targetSection.classList.add('fade-in');
+  currentSection = targetSection;
+
+  // Controle do seletor de datas
+  if (targetId === 'planSection') {
+    document.querySelector('#dateSelector').style.display = 'flex';
+    const selectedDate = document.querySelector('.date-item.active')?.dataset.date;
+    loadDailyMeals(selectedDate ? new Date(selectedDate) : new Date());
+  } 
+});
+  });
+
+  // Inicializa estado inicial corretamente
+  const initialTab = document.querySelector('.nav-tab.active');
+  if (initialTab) {
+    const initialTarget = initialTab.getAttribute('data-target');
+    currentSection = document.getElementById(initialTarget);
+    currentSection.style.display = 'block';
+    currentSection.classList.add('fade-in');
+
+    // Inicializa data se for My Plan
+    if (initialTarget === 'planSection') {
+      document.querySelector('#dateSelector').style.display = 'flex';
+      const selectedDate = document.querySelector('.date-item.active')?.dataset.date;
+      loadDailyMeals(selectedDate ? new Date(selectedDate) : new Date());
+    } else {
+      document.querySelector('#dateSelector').style.display = 'none';
     }
-    
-    // Initialize weight and metrics charts (if they exist on this page)
-    if (document.getElementById('weightChart')) {
-        initializeWeightChart();
-    }
-    
-    if (document.getElementById('metricsChart')) {
-        initializeMetricsChart();
-    }
-    
-    // Additional chart initialization functions would go here
-    
-}); // <-- This is the closing bracket for the document.addEventListener
+  }
+});
+ // <-- This is the closing bracket for the document.addEventListener
 // Ao clicar numa data
 async function swapMeal(mealId) {
   try {

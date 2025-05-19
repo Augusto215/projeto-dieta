@@ -550,7 +550,7 @@
               <div>Progress</div>
         </div>
             </a>
-            <a href="/learn-more" class="learn-more" style="color: #adb5bd; text-decoration: none;">
+            <a href="/learn" class="learn-more" style="color: #adb5bd; text-decoration: none;">
     
                 <div class="nav-item text-center">
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#adb5bd" viewBox="0 0 24 24">
@@ -618,6 +618,46 @@
         });
       });
     });
+
+        // Win checkboxes interaction
+        const checkboxes = document.querySelectorAll('.win-checkbox');
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('click', function() {
+            this.classList.toggle('checked');
+            
+            // Update level badges
+            updateLevelBadges();
+        });
+    });
+    
+    // Update level badges based on checked items
+    function updateLevelBadges() {
+        const levels = ['newbie', 'warrior', 'expert'];
+        
+        levels.forEach(level => {
+            const totalItems = document.querySelectorAll(`.win-checkbox[data-win^="${level}"]`).length;
+            const checkedItems = document.querySelectorAll(`.win-checkbox[data-win^="${level}"].checked`).length;
+            
+            // Update badge text
+            const badge = document.querySelector(`.win-level:contains('${level.charAt(0).toUpperCase() + level.slice(1)}') .win-level-badge`);
+            if (badge) {
+                badge.textContent = `${checkedItems}/${totalItems} completed`;
+            }
+        });
+    }
+    
+    // Initialize weight and metrics charts (if they exist on this page)
+    if (document.getElementById('weightChart')) {
+        initializeWeightChart();
+    }
+    
+    if (document.getElementById('metricsChart')) {
+        initializeMetricsChart();
+    }
+    
+    // Additional chart initialization functions would go here
+    
+;
   </script>
 </body>
 </html>

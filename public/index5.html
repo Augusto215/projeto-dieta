@@ -166,6 +166,74 @@
       color: #e94057;
       font-weight: 500;
     }
+    .references {
+            font-size: 12px;
+            color: #888;
+            border-top: 1px solid #eee;
+            margin-top: 20px;
+            padding-top: 15px;
+        }
+        
+        .references p {
+            margin-bottom: 5px;
+        }
+
+        
+         /* Recipe Card */
+         .activity-card {
+            background-color: rgb(255, 255, 255);
+            border-radius: 12px;
+            padding: 20px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .recipe-image {
+            position: relative;
+            height: 250px;
+            background-color: #f8f8f8;
+            overflow: hidden;
+        }
+
+        .recipe-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .article-btn {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: white;
+            color: black;
+            border-radius: 20px;
+            padding: 5px 12px;
+            font-size: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .btn-swap {
+    width: 100%;
+    border: 1px solid #dee2e6;
+    background: white;
+    border-radius: 6px;
+    padding: 8px 0;
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+    text-align: center;
+    margin-top: 10px;
+    cursor: pointer;
+    display: block;
+    text-decoration: none;
+}
   </style>
 </head>
 <body>
@@ -182,23 +250,8 @@
 
     <!-- Last News Content -->
     <div id="last-news" class="content-section">
-      <div class="development-container">
-        <div class="development-icon">
-          <i class="fas fa-newspaper"></i>
-        </div>
-        <div class="coming-soon">Latest News Coming Soon</div>
-        <p class="info-text">We're curating the most relevant health and fitness news for you. Stay tuned for updates on wellness trends, nutritional research, and fitness innovations.</p>
-        
-        <div class="alert alert-light" role="alert">
-          <i class="fas fa-lightbulb" style="color: #f6a22d;"></i> 
-          <span>Be the first to know when new content arrives!</span>
-        </div>
-        
-        <button class="notification-button">
-          <i class="fas fa-bell"></i> Notify Me
-        </button>
+        <div class="row" id="learnMoreContainer"></div>
       </div>
-    </div>
 
     <!-- Science Content (Hidden by default) -->
     <div id="science" class="content-section" style="display: none;">
@@ -271,7 +324,7 @@
           <div>Progress</div>
         </div>
             </a>
-            <a href="/learn-more" class="learn-more" style="color: #adb5bd; text-decoration: none;">
+            <a href="/learn" class="learn-more" style="color: #adb5bd; text-decoration: none;">
     
                 <div class="nav-item text-center">
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#adb5bd" viewBox="0 0 24 24">
@@ -282,6 +335,21 @@
             </a>
             </div>
     </div>
+
+    <div class="modal fade" id="learnMoreModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="learnModalTitle">Article Title</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="learnModalContent">
+              <!-- Conteúdo inserido dinamicamente -->
+            </div>
+          </div>
+        </div>
+      </div>
+      
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
   <script>
@@ -308,6 +376,60 @@
         });
       });
     });
+    async function loadLearnMoreEntries() {
+  const container = document.getElementById('learnMoreContainer');
+  container.innerHTML = '';
+
+  try {
+    const res = await fetch('/learn-more', { credentials: 'include' });
+    const entries = await res.json();
+
+    if (!Array.isArray(entries) || entries.length === 0) {
+      container.innerHTML = '<p class="text-muted text-center">No content available.</p>';
+      return;
+    }
+
+    entries.forEach(entry => {
+      const card = document.createElement('div');
+      card.className = 'activity-card';
+      card.innerHTML = `
+        <div class="recipe-image">
+          <img src="${entry.image_url}" alt="${entry.title}" class="img-fluid">
+          <button class="article-btn">ARTICLE</button>
+        </div>
+        <div class="recipe-info">
+          <h5 class="mt-2 recipe-title">${entry.title}</h5>
+          <div class="action-buttons">
+            <button class="btn-swap" data-entry='${JSON.stringify(entry)}'>Read</button>
+          </div>
+        </div>
+      `;
+
+      card.querySelector('.btn-swap').addEventListener('click', e => {
+        const data = JSON.parse(e.currentTarget.getAttribute('data-entry'));
+        document.getElementById('learnModalTitle').innerText = data.title;
+        document.getElementById('learnModalContent').innerHTML = `
+          <div class="article-content">
+            <p>${data.text || ''}</p>
+            <div class="references"><p>${data.references_text || ''}</p></div>
+          </div>
+        `;
+        const modal = new bootstrap.Modal(document.getElementById('learnMoreModal'));
+        modal.show();
+      });
+
+      container.appendChild(card);
+    });
+  } catch (err) {
+    console.error('[LearnMore] Erro ao carregar:', err);
+    container.innerHTML = '<p class="text-danger text-center">Erro ao carregar os artigos.</p>';
+  }
+}
+
+// Chamada automática no carregamento
+document.addEventListener('DOMContentLoaded', loadLearnMoreEntries);
+
+
   </script>
 </body>
 </html>
