@@ -6,6 +6,10 @@
     <title>PLANA App - Admin Dashboard</title>
     <!-- Bootstrap CSS -->
          <link rel="icon" type="image/x-icon" href="assets/img/69c26357-5c6f-4f2b-8812-6eeb56df9c42.ico">
+    <!-- Quill CSS -->
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+      <!-- Quill JS -->
+      <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
 
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
@@ -365,7 +369,6 @@
                                             <th width="80">Image</th>
                                             <th>Title</th>
                                             <th>Category</th>
-                                            <th>Date</th>
                                             <th>Meal Type</th>
                                             <th>Actions</th>
                                         </tr>
@@ -435,17 +438,21 @@
               </div>
             </div>
   
-            <div class="mb-3">
-              <label for="recipeIngredients" class="form-label">Ingredients</label>
-              <textarea class="form-control" id="recipeIngredients" name="ingredients" rows="3" required></textarea>
-              <small class="text-muted">One ingredient per line</small>
-            </div>
-  
-            <div class="mb-3">
-              <label for="recipeInstructions" class="form-label">Instructions</label>
-              <textarea class="form-control" id="recipeInstructions" name="instructions" rows="5" required></textarea>
-              <small class="text-muted">Numbered, step by step</small>
-            </div>
+          <!-- Ingredients -->
+<div class="mb-3">
+  <label class="form-label">Ingredients</label>
+  <div class="quill-editor" data-quill="recipe-add-ingredients" style="height: 150px;"></div>
+  <input type="hidden" name="ingredients" data-quill-target="recipe-add-ingredients">
+  <small class="text-muted">One ingredient per line</small>
+</div>
+
+<!-- Instructions -->
+<div class="mb-3">
+  <label class="form-label">Instructions</label>
+  <div class="quill-editor" data-quill="recipe-add-instructions" style="height: 200px;"></div>
+  <input type="hidden" name="instructions" data-quill-target="recipe-add-instructions">
+  <small class="text-muted">Numbered, step by step</small>
+</div>
   
             <div class="row">
               <div class="col-md-6">
@@ -499,7 +506,6 @@
                   <th>Title</th>
                   <th>Text</th>
                   <th>References</th>
-                  <th>Date</th>
                   <th>Actions</th>
                 </tr>
               </thead>
@@ -526,9 +532,11 @@
               <label for="glucoseTitle" class="form-label">Title</label>
               <input type="text" class="form-control" id="glucoseTitle" name="title" required>
             </div>
-            <div class="mb-3">
-              <label for="glucoseText" class="form-label">Text</label>
-              <textarea class="form-control" id="glucoseText" name="text" rows="4" required></textarea>
+            <!-- Qualquer modal/formulário -->
+              <div class="mb-3">
+                <label class="editGlucoseText">Text</label>
+                <div class="quill-editor" data-quill="glucose-add-text" style="height: 200px;"></div>
+                <input type="hidden" name="text" data-quill-target="glucose-add-text">
             </div>
             <div class="mb-3">
               <label for="glucoseRefs" class="form-label">References</label>
@@ -564,9 +572,11 @@
               <input type="text" class="form-control" id="editGlucoseTitle" name="title" required>
             </div>
   
-            <div class="mb-3">
-              <label for="editGlucoseText" class="form-label">Text</label>
-              <textarea class="form-control" id="editGlucoseText" name="text" rows="4" required></textarea>
+            <!-- Qualquer modal/formulário -->
+              <div class="mb-3">
+                <label class="editGlucoseTex">Text</label>
+                <div class="quill-editor" data-quill="glucose-edit-text" style="height: 200px;"></div>
+                <input type="hidden" name="text" data-quill-target="glucose-edit-text">
             </div>
   
             <div class="mb-3">
@@ -590,42 +600,54 @@
   </div>
   
   <script>
-    document.querySelector('#addRecipeModal .btn-primary').addEventListener('click', async () => {
-        const form = document.getElementById('addRecipeForm');
-        const formData = new FormData();
-    
-        formData.append('title', document.getElementById('recipeTitle').value);
-        formData.append('category', document.getElementById('recipeCategory').value);
-        formData.append('meal_type', document.getElementById('recipeMealType').value);
-        formData.append('ingredients', document.getElementById('recipeIngredients').value);
-        formData.append('instructions', document.getElementById('recipeInstructions').value);
-        formData.append('prep_time', document.getElementById('recipePrep').value);
-        formData.append('calories', document.getElementById('recipeCalories').value);
-        formData.append('published', document.getElementById('recipePublish').checked);
-    
-        const imageInput = document.getElementById('recipeImage');
-        if (imageInput.files.length > 0) {
-            formData.append('image', imageInput.files[0]);
-        }
-    
-        try {
-            const response = await fetch('/recipes', {
-                method: 'POST',
-                body: formData
-            });
-    
-            const result = await response.json();
-            if (response.ok) {
-                alert('Receita criada com sucesso!');
-                bootstrap.Modal.getInstance(document.getElementById('addRecipeModal')).hide();
-                location.reload();
-            } else {
-                alert('Erro ao salvar receita: ' + (result.message || 'Erro desconhecido'));
-            }
-        } catch (err) {
-            alert('Erro inesperado: ' + err.message);
-        }
+   document.querySelector('#addRecipeModal .btn-primary').addEventListener('click', async () => {
+  const form = document.getElementById('addRecipeForm');
+  const formData = new FormData();
+
+  const quillIngredients = quillInstances["recipe-add-ingredients"];
+  const quillInstructions = quillInstances["recipe-add-instructions"];
+
+  if (!quillIngredients || !quillInstructions) {
+    alert("Um ou mais editores Quill não foram encontrados.");
+    return;
+  }
+
+  formData.append('title', document.getElementById('recipeTitle').value);
+  formData.append('category', document.getElementById('recipeCategory').value);
+  formData.append('meal_type', document.getElementById('recipeMealType').value);
+  formData.append('ingredients', quillIngredients.root.innerHTML);
+  formData.append('instructions', quillInstructions.root.innerHTML);
+  formData.append('prep_time', document.getElementById('recipePrep').value);
+  formData.append('calories', document.getElementById('recipeCalories').value);
+  formData.append('published', document.getElementById('recipePublish').checked);
+
+  const imageInput = document.getElementById('recipeImage');
+  if (imageInput.files.length > 0) {
+    formData.append('image', imageInput.files[0]);
+  }
+
+  try {
+    const response = await fetch('/recipes', {
+      method: 'POST',
+      body: formData
     });
+
+    const result = await response.json();
+    if (response.ok) {
+      alert('Receita criada com sucesso!');
+      bootstrap.Modal.getInstance(document.getElementById('addRecipeModal')).hide();
+      form.reset();
+      quillIngredients.setContents([]);
+      quillInstructions.setContents([]);
+      location.reload();
+    } else {
+      alert('Erro ao salvar receita: ' + (result.message || 'Erro desconhecido'));
+    }
+  } catch (err) {
+    alert('Erro inesperado: ' + err.message);
+  }
+});
+
     </script>
     <script>
         document.getElementById('recipeImage').addEventListener('change', function (event) {
@@ -669,7 +691,6 @@
                                             <th width="80">Image</th>
                                             <th>Title</th>
                                             <th>Duration</th>
-                                            <th>Date</th>
                                             <th>Status</th>
                                             <th>Actions</th>
                                         </tr>
@@ -786,9 +807,11 @@
                                         </div>
                                     </div>
                                     
-                                    <div class="mb-3">
-                                        <label for="challengeDescription" class="form-label">Description</label>
-                                        <textarea class="form-control" id="challengeDescription" rows="3" placeholder="Brief description of the challenge"></textarea>
+                                   <!-- Qualquer modal/formulário -->
+                                      <div class="mb-3">
+                                        <label class="challengeDescription">Description</label>
+                                        <div class="quill-editor" data-quill="challenge-add-description" style="height: 200px;"></div>
+                                        <input type="hidden" name="description" data-quill-target="challenge-add-description">
                                     </div>
                                     
                                     <div class="mb-3">
@@ -839,7 +862,6 @@
                               <th>Title</th>
                               <th>Description</th>
                               <th>References</th>
-                              <th>Date</th>
                               <th>Actions</th>
                           </tr>
                       </thead>
@@ -875,7 +897,6 @@
                               <th>Title</th>
                               <th>Description</th>
                               <th>References</th>
-                              <th>Date</th>
                               <th>Actions</th>
                           </tr>
                       </thead>
@@ -917,7 +938,6 @@
                                             <th width="80">Image</th>
                                             <th>Title</th>
                                             <th>Category</th>
-                                            <th>Date</th>
                                             <th>Status</th>
                                             <th>Actions</th>
                                         </tr>
@@ -1241,7 +1261,6 @@
                                           <th>Title</th>
                                           <th>Description</th>
                                           <th>References</th>
-                                          <th>Date</th>
                                           <th>Actions</th>
                                       </tr>
                                   </thead>
@@ -1280,7 +1299,6 @@
                   <th>Duration</th>
                   <th>Best Time</th>
                   <th>Steps</th>
-                  <th>Date</th>
                   <th>Actions</th>
                 </tr>
               </thead>
@@ -1320,10 +1338,11 @@
               <label for="lightBestTime" class="form-label">Best Time</label>
               <input type="text" class="form-control" id="lightBestTime" name="best_time">
             </div>
-            <div class="mb-3">
-              <label for="lightSteps" class="form-label">Steps</label>
-              <textarea class="form-control" id="lightSteps" name="steps" rows="3"></textarea>
-            </div>
+           <div class="mb-3">
+            <label class="form-label">Steps</label>
+            <div class="quill-editor" data-quill="light-add-steps" style="height: 200px;"></div>
+            <input type="hidden" name="steps" data-quill-target="light-add-steps">
+          </div>
             <div class="mb-3">
               <label for="lightImage" class="form-label">Image</label>
               <input type="file" class="form-control" id="lightImage" name="image" accept="image/*">
@@ -1365,10 +1384,12 @@
               <label for="editLightBestTime" class="form-label">Best Time</label>
               <input type="text" class="form-control" id="editLightBestTime" name="best_time">
             </div>
-            <div class="mb-3">
-              <label for="editLightSteps" class="form-label">Steps</label>
-              <textarea class="form-control" id="editLightSteps" name="steps" rows="3"></textarea>
-            </div>
+              <!-- Qualquer modal/formulário -->
+              <div class="mb-3">
+            <label class="form-label">Steps</label>
+            <div class="quill-editor" data-quill="light-edit-steps" style="height: 200px;"></div>
+            <input type="hidden" name="steps" data-quill-target="light-edit-steps">
+          </div>
             <div class="mb-3 text-center">
               <label class="form-label">Image</label>
               <img id="editLightPreview" src="/api/placeholder/120/120" class="thumbnail-preview mb-2" alt="Preview">
@@ -1414,14 +1435,19 @@
                   <label class="form-label">Meal Type</label>
                   <input type="text" class="form-control" id="editRecipeMealType" required>
                 </div>
-                <div class="mb-3">
-                  <label class="form-label">Ingredients</label>
-                  <textarea class="form-control" id="editRecipeIngredients" rows="3" required></textarea>
-                </div>
-                <div class="mb-3">
-                  <label class="form-label">Instructions</label>
-                  <textarea class="form-control" id="editRecipeInstructions" rows="5" required></textarea>
-                </div>
+               <!-- Ingredients -->
+<div class="mb-3">
+  <label class="form-label">Ingredients</label>
+  <div class="quill-editor" data-quill="recipe-edit-ingredients" style="height: 150px;"></div>
+  <input type="hidden" name="ingredients" data-quill-target="recipe-edit-ingredients">
+</div>
+
+<!-- Instructions -->
+<div class="mb-3">
+  <label class="form-label">Instructions</label>
+  <div class="quill-editor" data-quill="recipe-edit-instructions" style="height: 200px;"></div>
+  <input type="hidden" name="instructions" data-quill-target="recipe-edit-instructions">
+</div>
                   </div>
                   <div class="col-md-4">
                     <div class="mb-3 text-center">
@@ -1455,12 +1481,13 @@
                   <input type="text" class="form-control" id="learnTitle" name="title" required>
                 </div>
                 <div class="mb-3">
-                  <label for="learnDescription" class="form-label">Description</label>
-                  <textarea class="form-control" id="learnDescription" name="description" rows="3"></textarea>
+                  <label class="form-label">Description</label>
+                  <div class="quill-editor" data-quill="learn-add-description" style="height: 200px;"></div>
+                  <input type="hidden" name="description" data-quill-target="learn-add-description">
                 </div>
                 <div class="mb-3">
                   <label for="learnReferences" class="form-label">References</label>
-                  <textarea class="form-control" id="learnReferences" name="references" rows="3"></textarea>
+                  <textarea class="form-control" id="learnReferences" name="references_text" rows="3"></textarea>
                 </div>
                 <div class="mb-3">
                   <label for="learnImage" class="form-label">Image</label>
@@ -1490,12 +1517,14 @@
                   <input type="text" class="form-control" id="scienceTitle" name="title" required>
                 </div>
                 <div class="mb-3">
-                  <label for="scienceDescription" class="form-label">Description</label>
-                  <textarea class="form-control" id="scienceDescription" name="description" rows="3"></textarea>
-                </div>
+                <label class="form-label">Description</label>
+                <div class="quill-editor" data-quill="science-add-description" style="height: 200px;"></div>
+                <input type="hidden" name="description" data-quill-target="science-add-description">
+              </div>
+
                 <div class="mb-3">
                   <label for="scienceReferences" class="form-label">References</label>
-                  <textarea class="form-control" id="scienceReferences" name="references" rows="3"></textarea>
+                  <textarea class="form-control" id="scienceReferences" name="references_text" rows="3"></textarea>
                 </div>
                 <div class="mb-3">
                   <label for="scienceImage" class="form-label">Image</label>
@@ -1525,10 +1554,12 @@
             <label for="editScienceTitle" class="form-label">Title</label>
             <input type="text" class="form-control" id="editScienceTitle" name="title" required>
           </div>
-          <div class="mb-3">
-            <label for="editScienceDescription" class="form-label">Description</label>
-            <textarea class="form-control" id="editScienceDescription" name="description" rows="3" required></textarea>
-          </div>
+     
+                <div class="mb-3">
+                  <label class="editScienceDescription">Description</label>
+                  <div class="quill-editor" id="editScienceDescription" data-quill="editScience-description" style="height: 200px;"></div>
+                  <input type="hidden"   name="description" data-quill-target="editScience-description">
+              </div>
           <div class="mb-3">
             <label for="editScienceReferences" class="form-label">References</label>
             <textarea class="form-control" id="editScienceReferences" name="references_text" rows="3"></textarea>
@@ -1563,8 +1594,9 @@
             <input type="text" class="form-control" id="editLearnTitle" required>
           </div>
           <div class="mb-3">
-            <label for="editLearnDescription" class="form-label">Description</label>
-            <textarea class="form-control" id="editLearnDescription" rows="3"></textarea>
+            <label class="form-label">Description</label>
+            <div class="quill-editor" data-quill="editLearn-description" style="height: 200px;"></div>
+            <input type="hidden" name="description" data-quill-target="editLearn-description">
           </div>
           <div class="mb-3">
             <label for="editLearnReferences" class="form-label">References</label>
@@ -1676,7 +1708,6 @@
                 <td><img src="${recipe.image_url || '/api/placeholder/60/60'}" class="rounded" width="60" height="60" alt="Recipe"></td>
                 <td>${recipe.title}</td>
                 <td>${recipe.category}</td>
-                <td>${new Date(recipe.created_at).toLocaleDateString()}</td>
                 <td>${recipe.meal_type}</td>
                 <td>
                   <div class="btn-group table-action-buttons">
@@ -1726,36 +1757,55 @@
         }
         </script>
         <script>
-            async function editRecipe(id) {
-              try {
-                const res = await fetch(`/recipes/${id}`, {
-                credentials: 'include'
-                });    
-     
-                const recipe = await res.json();
-            
-                document.getElementById('editRecipeId').value = recipe.id;
-                document.getElementById('editRecipeTitle').value = recipe.title;
-                document.getElementById('editRecipeCategory').value = recipe.category;
-                document.getElementById('editRecipeMealType').value = recipe.meal_type;
-                document.getElementById('editRecipeIngredients').value = recipe.ingredients;
-                document.getElementById('editRecipeInstructions').value = recipe.instructions;
-            
-                new bootstrap.Modal(document.getElementById('editRecipeModal')).show();
-              } catch (err) {
-                alert('Erro ao carregar receita para edição: ' + err.message);
-              }
-            }
-            
-            async function submitEdit() {
+ async function editRecipe(id) {
+  try {
+    const res = await fetch(`/recipes/${id}`, { credentials: 'include' });
+    const recipe = await res.json();
+
+    document.getElementById('editRecipeId').value = recipe.id;
+    document.getElementById('editRecipeTitle').value = recipe.title;
+    document.getElementById('editRecipeCategory').value = recipe.category;
+    document.getElementById('editRecipeMealType').value = recipe.meal_type;
+
+    document.getElementById('editImagePreview').src = recipe.image_url || '/api/placeholder/120/120';
+
+    const quillIngredients = quillInstances["recipe-edit-ingredients"];
+    const quillInstructions = quillInstances["recipe-edit-instructions"];
+
+    if (quillIngredients) {
+      quillIngredients.setContents(quillIngredients.clipboard.convert(recipe.ingredients || ""));
+    } else {
+      console.warn("Editor Quill 'recipe-edit-ingredients' não encontrado");
+    }
+
+    if (quillInstructions) {
+      quillInstructions.setContents(quillInstructions.clipboard.convert(recipe.instructions || ""));
+    } else {
+      console.warn("Editor Quill 'recipe-edit-instructions' não encontrado");
+    }
+
+    new bootstrap.Modal(document.getElementById('editRecipeModal')).show();
+  } catch (err) {
+    alert('Erro ao carregar receita para edição: ' + err.message);
+  }
+}
+async function submitEdit() {
   const id = document.getElementById('editRecipeId').value;
   const formData = new FormData();
+
+  const quillIngredients = quillInstances["recipe-edit-ingredients"];
+  const quillInstructions = quillInstances["recipe-edit-instructions"];
+
+  if (!quillIngredients || !quillInstructions) {
+    alert("Um ou mais editores Quill não estão disponíveis.");
+    return;
+  }
 
   formData.append('title', document.getElementById('editRecipeTitle').value);
   formData.append('category', document.getElementById('editRecipeCategory').value);
   formData.append('meal_type', document.getElementById('editRecipeMealType').value);
-  formData.append('ingredients', document.getElementById('editRecipeIngredients').value);
-  formData.append('instructions', document.getElementById('editRecipeInstructions').value);
+  formData.append('ingredients', quillIngredients.root.innerHTML);
+  formData.append('instructions', quillInstructions.root.innerHTML);
 
   const imageFile = document.getElementById('editRecipeImage').files[0];
   if (imageFile) {
@@ -1783,6 +1833,7 @@
 }
 
 
+
             document.getElementById('editRecipeImage').addEventListener('change', function (event) {
   const file = event.target.files[0];
   if (file) {
@@ -1797,30 +1848,50 @@
             </script>
 
 <script>
-    async function submitGlucoseEntry() {
-      const form = document.getElementById('glucoseForm');
-      const formData = new FormData(form);
-    
-      try {
-        const res = await fetch('/glucose-walk', {
-          method: 'POST',
-          body: formData
-        });
-    
-        const result = await res.json();
-    
-        if (res.ok) {
-          alert('Glucose Walk saved successfully');
-          bootstrap.Modal.getInstance(document.getElementById('addGlucoseModal')).hide();
-          form.reset();
-          loadGlucoseEntries();
-        } else {
-          alert('Error: ' + (result.message || 'Unknown error'));
-        }
-      } catch (err) {
-        alert('Network error: ' + err.message);
-      }
+   async function submitGlucoseEntry() {
+  const form = document.getElementById('glucoseForm');
+  const formData = new FormData(form);
+
+  // Pegando conteúdo do Quill corretamente
+  const quill = quillInstances["glucose-add-text"];
+  if (!quill) {
+    alert("Editor de texto não está disponível.");
+    return;
+  }
+
+  const textHTML = quill.root.innerHTML;
+  formData.set('text', textHTML);  // substitui ou adiciona o campo "text"
+
+  const imageInput = document.getElementById('glucoseImage');
+  if (imageInput.files.length > 0) {
+    formData.set('image', imageInput.files[0]);
+  }
+
+  try {
+    const res = await fetch('/glucose-walk', {
+      method: 'POST',
+      body: formData
+    });
+
+    const result = await res.json();
+
+    if (res.ok) {
+      alert('Glucose Walk salvo com sucesso!');
+      bootstrap.Modal.getInstance(document.getElementById('addGlucoseModal')).hide();
+      form.reset();
+
+      // Limpa o Quill
+      quill.setContents([]);
+
+      loadGlucoseEntries();
+    } else {
+      alert('Erro ao salvar: ' + (result.message || 'Erro desconhecido'));
     }
+  } catch (err) {
+    alert('Erro de rede: ' + err.message);
+  }
+}
+
     
     async function loadGlucoseEntries() {
       try {
@@ -1838,7 +1909,6 @@
             <td>${entry.title}</td>
             <td>${entry.text}</td>
             <td>${entry.references_text || ''}</td>
-            <td>${new Date(entry.created_at).toLocaleDateString()}</td>
             <td>
               <button class="btn btn-sm btn-outline-danger" onclick="deleteGlucoseEntry('${entry.id}')">
                 <i class="bi bi-trash"></i>
@@ -1899,26 +1969,36 @@ async function editGlucoseEntry(id) {
 
     const entry = await res.json();
 
-    // Preenche os campos
     document.getElementById('editGlucoseId').value = entry.id;
-    document.getElementById('editGlucoseTitle').value = entry.title;
-    document.getElementById('editGlucoseText').value = entry.text;
+    document.getElementById('editGlucoseTitle').value = entry.title || '';
     document.getElementById('editGlucoseRefs').value = entry.references_text || '';
     document.getElementById('editGlucosePreview').src = entry.image_url || '/api/placeholder/120/120';
 
-    // Mostra o modal
-    new bootstrap.Modal(document.getElementById('editGlucoseModal')).show();
+    const quill = quillInstances["glucose-edit-text"];
+    if (quill) {
+      quill.setContents(quill.clipboard.convert(entry.text || ""));
+    } else {
+      console.warn("Editor Quill 'glucose-edit-text' não encontrado");
+    }
 
+    new bootstrap.Modal(document.getElementById('editGlucoseModal')).show();
   } catch (err) {
     alert('Erro ao carregar entrada: ' + err.message);
   }
 }
+
 async function submitGlucoseEdit() {
   const id = document.getElementById('editGlucoseId').value;
   const formData = new FormData();
 
+  const quill = quillInstances["glucose-edit-text"];
+  if (!quill) {
+    alert("Editor de texto não está disponível.");
+    return;
+  }
+
   formData.append('title', document.getElementById('editGlucoseTitle').value);
-  formData.append('text', document.getElementById('editGlucoseText').value);
+  formData.append('text', quill.root.innerHTML);
   formData.append('references_text', document.getElementById('editGlucoseRefs').value);
 
   const imageFile = document.getElementById('editGlucoseImage').files[0];
@@ -1941,11 +2021,11 @@ async function submitGlucoseEdit() {
     } else {
       alert('Erro ao atualizar: ' + (result.message || 'Erro desconhecido'));
     }
-
   } catch (err) {
     alert('Erro inesperado: ' + err.message);
   }
 }
+
 
     </script>
     <script>
@@ -1971,7 +2051,6 @@ async function submitGlucoseEdit() {
         <td>${entry.duration || '-'}</td>
         <td>${entry.best_time || '-'}</td>
         <td>${entry.steps || '-'}</td>
-        <td>${new Date(entry.created_at).toLocaleDateString()}</td>
         <td>
           <button class="btn btn-sm btn-outline-secondary" onclick="editLightActivationEntry('${entry.id}')"><i class="bi bi-pencil"></i></button>
           <button class="btn btn-sm btn-outline-danger" onclick="deleteLightActivationEntry('${entry.id}')"><i class="bi bi-trash"></i></button>
@@ -1986,36 +2065,47 @@ async function submitGlucoseEdit() {
     </script>
     
             <script>
-  async function submitLightActivationEntry() {
-    const form = document.getElementById('lightActivationForm');
-    const formData = new FormData(form);
+async function submitLightActivationEntry() {
+  const form = document.getElementById('lightActivationForm');
+  const formData = new FormData(form);
 
-    try {
-      const res = await fetch('/light-activation', {
-        method: 'POST',
-        body: formData
-      });
-
-      const result = await res.json();
-
-      if (res.ok) {
-        alert('Light Activation entry saved successfully.');
-        bootstrap.Modal.getInstance(document.getElementById('addLightActivationModal')).hide();
-        form.reset();
-        loadLightActivationEntries(); // precisa existir ou ser implementado
-      } else {
-        alert('Error: ' + (result.message || 'Unknown error'));
-      }
-    } catch (err) {
-      alert('Network error: ' + err.message);
-    }
+  console.log('[DEBUG] Submitting Light Activation form...');
+  console.log('[DEBUG] Form data entries:');
+  for (const [key, value] of formData.entries()) {
+    console.log(`  - ${key}:`, value);
   }
 
-  async function editLightActivationEntry(id) {
   try {
-    const res = await fetch(`/light-activation/${id}`, {
-      method: 'GET'
+    const res = await fetch('/light-activation', {
+      method: 'POST',
+      body: formData
     });
+
+    console.log('[DEBUG] Response status:', res.status);
+
+    const result = await res.json();
+    console.log('[DEBUG] Response body:', result);
+
+    if (res.ok) {
+      alert('Light Activation entry saved successfully.');
+      bootstrap.Modal.getInstance(document.getElementById('addLightActivationModal')).hide();
+      form.reset();
+      console.log('[DEBUG] Form reset and modal closed.');
+      loadLightActivationEntries(); // Certifique-se que essa função está implementada
+    } else {
+      console.warn('[WARN] Backend error:', result.message || 'Unknown error');
+      alert('Error: ' + (result.message || 'Unknown error'));
+    }
+  } catch (err) {
+    console.error('[ERROR] Network or unexpected failure:', err);
+    alert('Network error: ' + err.message);
+  }
+}
+
+
+async function editLightActivationEntry(id) {
+  try {
+    const res = await fetch(`/light-activation/${id}`, { method: 'GET' });
 
     if (!res.ok) {
       alert('Erro ao buscar dados para edição');
@@ -2024,13 +2114,19 @@ async function submitGlucoseEdit() {
 
     const entry = await res.json();
 
-    // Preenche os campos do modal
     document.getElementById('editLightId').value = entry.id;
     document.getElementById('editLightTitle').value = entry.title;
     document.getElementById('editLightGoal').value = entry.goal || '';
     document.getElementById('editLightDuration').value = entry.duration || '';
     document.getElementById('editLightBestTime').value = entry.best_time || '';
-    document.getElementById('editLightSteps').value = entry.steps || '';
+
+    // ⚠️ Corrigido para usar Quill
+    if (quillInstances['light-edit-steps']) {
+      quillInstances['light-edit-steps'].root.innerHTML = entry.steps || '';
+    } else {
+      console.error("Editor 'light-edit-steps' não inicializado.");
+    }
+
     document.getElementById('editLightPreview').src = entry.image_url || '/api/placeholder/120/120';
 
     new bootstrap.Modal(document.getElementById('editLightActivationModal')).show();
@@ -2038,6 +2134,7 @@ async function submitGlucoseEdit() {
     alert('Erro ao carregar entrada: ' + err.message);
   }
 }
+
 
 
 async function deleteLightActivationEntry(id) {
@@ -2063,17 +2160,39 @@ async function deleteLightActivationEntry(id) {
 
 async function submitLightActivationEdit() {
   const id = document.getElementById('editLightId').value;
+  console.log('[EDIT] ID da entrada:', id);
+
   const formData = new FormData();
 
-  formData.append('title', document.getElementById('editLightTitle').value);
-  formData.append('goal', document.getElementById('editLightGoal').value);
-  formData.append('duration', document.getElementById('editLightDuration').value);
-  formData.append('best_time', document.getElementById('editLightBestTime').value);
-  formData.append('steps', document.getElementById('editLightSteps').value);
+  const title = document.getElementById('editLightTitle').value;
+  const goal = document.getElementById('editLightGoal').value;
+  const duration = document.getElementById('editLightDuration').value;
+  const bestTime = document.getElementById('editLightBestTime').value;
 
+  console.log('[EDIT] Dados coletados:', { title, goal, duration, bestTime });
+
+  formData.append('title', title);
+  formData.append('goal', goal);
+  formData.append('duration', duration);
+  formData.append('best_time', bestTime);
+
+  // Coleta do conteúdo do Quill (steps)
+  const quill = quillInstances["light-edit-steps"];
+  if (quill) {
+    const stepsHTML = quill.root.innerHTML;
+    formData.append('steps', stepsHTML);
+    console.log('[EDIT] Steps coletado do Quill.');
+  } else {
+    console.warn("[EDIT] Editor Quill 'light-edit-steps' não encontrado");
+  }
+
+  // Imagem
   const imageFile = document.getElementById('editLightImage').files[0];
   if (imageFile) {
     formData.append('image', imageFile);
+    console.log('[EDIT] Imagem anexada:', imageFile.name);
+  } else {
+    console.log('[EDIT] Nenhuma imagem fornecida.');
   }
 
   try {
@@ -2082,19 +2201,24 @@ async function submitLightActivationEdit() {
       body: formData
     });
 
+    console.log('[EDIT] Status da resposta:', res.status);
+
     const result = await res.json();
+    console.log('[EDIT] Resposta do servidor:', result);
 
     if (res.ok) {
       alert('Entrada atualizada com sucesso!');
       bootstrap.Modal.getInstance(document.getElementById('editLightActivationModal')).hide();
-      loadLightActivationEntries(); // Certifique-se de ter essa função
+      loadLightActivationEntries(); // Confirme que essa função está ativa
     } else {
       alert('Erro ao atualizar: ' + (result.message || 'Erro desconhecido'));
     }
   } catch (err) {
+    console.error('[EDIT] Erro inesperado:', err);
     alert('Erro inesperado ao atualizar: ' + err.message);
   }
 }
+
 
 fetch('/api/home')
   .then(async (res) => {
@@ -2109,6 +2233,9 @@ fetch('/api/home')
   
 </script>
 <script>
+
+  
+
 
 
 async function deleteLearnMore(id) {
@@ -2163,8 +2290,7 @@ async function loadLearnMoreEntries() {
         <td><img src="${entry.image_url || '/api/placeholder/60/60'}" width="60" height="60" class="rounded" /></td>
         <td>${entry.title}</td>
         <td>${entry.description || ''}</td>
-        <td>${entry.references || ''}</td>
-        <td>${new Date(entry.created_at).toLocaleDateString()}</td>
+        <td>${entry.references_text || ''}</td>
         <td>
           <button class="btn btn-sm btn-outline-secondary" onclick="editLearnMore('${entry.id}')"><i class="bi bi-pencil"></i></button>
           <button class="btn btn-sm btn-outline-danger" onclick="deleteLearnMore('${entry.id}')"><i class="bi bi-trash"></i></button>
@@ -2199,10 +2325,18 @@ async function deleteLearnMore(id) {
 async function submitLearnMore() {
   const formData = new FormData();
 
+  // Title
   formData.append('title', document.getElementById('learnTitle').value);
-  formData.append('description', document.getElementById('learnDescription').value);
+
+  // Description from Quill
+  const quill = quillInstances['learn-add-description'];
+  const htmlDescription = quill ? quill.root.innerHTML : '';
+  formData.append('description', htmlDescription);
+
+  // References
   formData.append('references_text', document.getElementById('learnReferences').value);
 
+  // Image
   const imageInput = document.getElementById('learnImage');
   if (imageInput.files.length > 0) {
     formData.append('image', imageInput.files[0]);
@@ -2228,6 +2362,48 @@ async function submitLearnMore() {
     alert('Erro inesperado: ' + err.message);
   }
 }
+
+async function submitScienceEntry() {
+  const formData = new FormData();
+
+  // Title
+  formData.append('title', document.getElementById('scienceTitle').value);
+
+  // Description from Quill
+  const quill = quillInstances['science-add-description'];
+  const htmlDescription = quill ? quill.root.innerHTML : '';
+  formData.append('description', htmlDescription);
+
+  // References
+  formData.append('references_text', document.getElementById('scienceReferences').value);
+
+  // Image
+  const imageInput = document.getElementById('scienceImage');
+  if (imageInput.files.length > 0) {
+    formData.append('image', imageInput.files[0]);
+  }
+
+  try {
+    const res = await fetch('/science', {
+      method: 'POST',
+      body: formData
+    });
+
+    const result = await res.json();
+
+    if (res.ok) {
+      alert('Science salvo com sucesso!');
+      bootstrap.Modal.getInstance(document.getElementById('addScienceModal')).hide();
+      document.getElementById('scienceForm').reset();
+      loadLearnMoreEntries(); // Este pode estar errado — deve ser loadScienceEntries()?
+    } else {
+      alert('Erro: ' + (result.message || 'Erro desconhecido'));
+    }
+  } catch (err) {
+    alert('Erro inesperado: ' + err.message);
+  }
+}
+
 
 async function submitScienceEntry() {
   const formData = new FormData();
@@ -2302,7 +2478,6 @@ async function loadScienceEntries() {
         <td>${entry.title}</td>
         <td>${entry.description}</td>
         <td>${entry.references_text || ''}</td>
-        <td>${new Date(entry.created_at).toLocaleDateString()}</td>
         <td>
           <button class="btn btn-sm btn-outline-secondary" onclick="editScienceEntry('${entry.id}')"><i class="bi bi-pencil"></i></button>
           <button class="btn btn-sm btn-outline-danger" onclick="deleteScienceEntry('${entry.id}')"><i class="bi bi-trash"></i></button>
@@ -2367,33 +2542,45 @@ async function submitScienceEdit() {
   }
 }
 
-// Learn More - Abrir modal de edição com dados existentes
 async function editLearnMore(id) {
   try {
     const res = await fetch(`/learn-more/${id}`);
-    if (!res.ok) throw new Error('Não foi possível buscar os dados');
+    if (!res.ok) throw new Error('Falha no fetch');
 
     const entry = await res.json();
 
     document.getElementById('editLearnId').value = entry.id;
     document.getElementById('editLearnTitle').value = entry.title || '';
-    document.getElementById('editLearnDescription').value = entry.description || '';
     document.getElementById('editLearnReferences').value = entry.references_text || '';
     document.getElementById('editLearnPreview').src = entry.image_url || '/api/placeholder/120/120';
 
+    const quill = quillInstances["editLearn-description"];
+    if (quill) {
+      quill.setContents(quill.clipboard.convert(entry.description || ""));
+    } else {
+      console.warn("Editor Quill 'editLearn-description' não encontrado");
+    }
+
     new bootstrap.Modal(document.getElementById('editLearnMoreModal')).show();
   } catch (err) {
-    alert('Erro ao carregar entrada: ' + err.message);
+    alert('Erro ao carregar Learn More: ' + err.message);
   }
 }
 
-// Learn More - Enviar PUT para atualizar entrada
+
+
 async function submitLearnMoreEdit() {
   const id = document.getElementById('editLearnId').value;
   const formData = new FormData();
 
+  const quill = quillInstances["editLearn-description"];
+  if (!quill) {
+    alert("Editor de descrição não está disponível.");
+    return;
+  }
+
   formData.append('title', document.getElementById('editLearnTitle').value);
-  formData.append('description', document.getElementById('editLearnDescription').value);
+  formData.append('description', quill.root.innerHTML);
   formData.append('references_text', document.getElementById('editLearnReferences').value);
 
   const imageInput = document.getElementById('editLearnImage');
@@ -2432,9 +2619,14 @@ async function editScienceEntry(id) {
 
     document.getElementById('editScienceId').value = entry.id;
     document.getElementById('editScienceTitle').value = entry.title;
-    document.getElementById('editScienceDescription').value = entry.description;
-    document.getElementById('editScienceReferences').value = entry.references_text || '';
+     document.getElementById('editScienceReferences').value = entry.references_text || '';
     document.getElementById('editSciencePreview').src = entry.image_url || '/api/placeholder/120/120';
+    const quill = quillInstances["editScience-description"];
+    if (quill) {
+      quill.setContents(quill.clipboard.convert(entry.description || ""));
+    } else {
+      console.warn("Editor Quill 'editScience-description' não encontrado");
+    } 
 
     new bootstrap.Modal(document.getElementById('editScienceModal')).show();
   } catch (err) {
@@ -2446,8 +2638,14 @@ async function submitScienceEdit() {
   const id = document.getElementById('editScienceId').value;
   const formData = new FormData();
 
+  // Pegando conteúdo direto dos inputs
   formData.append('title', document.getElementById('editScienceTitle').value);
-  formData.append('description', document.getElementById('editScienceDescription').value);
+
+  // Pegando conteúdo do Quill corretamente
+  const quill = quillInstances['editScience-description'];
+  const htmlDescription = quill ? quill.root.innerHTML : '';
+  formData.append('description', htmlDescription);
+
   formData.append('references_text', document.getElementById('editScienceReferences').value);
 
   const image = document.getElementById('editScienceImage').files[0];
@@ -2463,7 +2661,7 @@ async function submitScienceEdit() {
     if (res.ok) {
       alert('Science atualizado com sucesso!');
       bootstrap.Modal.getInstance(document.getElementById('editScienceModal')).hide();
-      loadScienceEntries(); // Certifique-se que essa função exista
+      loadScienceEntries();
     } else {
       alert('Erro ao atualizar: ' + (result.message || 'Erro desconhecido'));
     }
@@ -2471,6 +2669,7 @@ async function submitScienceEdit() {
     alert('Erro inesperado: ' + err.message);
   }
 }
+
 async function deleteScienceEntry(id) {
   if (!confirm('Tem certeza que deseja excluir esta entrada de Science?')) return;
 
@@ -2492,6 +2691,135 @@ async function deleteScienceEntry(id) {
   }
 }
 
+
+
 </script>
+
+<script>
+  let quill;
+
+  document.addEventListener("DOMContentLoaded", function () {
+    // Inicializa o editor Quill
+    quill = new Quill("#quillEditor", {
+      theme: "snow",
+      placeholder: "Digite os passos aqui com formatação...",
+      modules: {
+        toolbar: [
+          [{ header: [1, 2, false] }],
+          ["bold", "italic", "underline"],
+          ["blockquote", "code-block"],
+          [{ list: "ordered" }, { list: "bullet" }],
+          ["clean"]
+        ]
+      }
+    });
+  });
+
+  function submitLightActivationEntry() {
+    // Pega o HTML gerado pelo Quill
+    const stepsHTML = quill.root.innerHTML;
+
+    // Coloca no input hidden
+    document.getElementById("lightSteps").value = stepsHTML;
+
+    // Prepara o envio
+    const form = document.getElementById("lightActivationForm");
+    const formData = new FormData(form);
+
+    fetch('/light-activation', {
+      method: 'POST',
+      body: formData
+    })
+    .then(response => response.json())
+    .then(result => {
+      alert(result.message || 'Light Activation salva com sucesso');
+      
+      // Opcional: resetar o editor e fechar o modal
+      quill.root.innerHTML = '';
+      form.reset();
+      const modal = bootstrap.Modal.getInstance(document.getElementById('addLightActivationModal'));
+      modal.hide();
+
+      // TODO: recarregar tabela/listagem se necessário
+    })
+    .catch(err => {
+      console.error('❌ Erro ao salvar:', err);
+      alert('Erro ao salvar');
+    });
+  }
+
+const quillInstances = {};
+
+document.addEventListener("DOMContentLoaded", () => {
+  document.querySelectorAll(".quill-editor").forEach(editorEl => {
+    const key = editorEl.getAttribute("data-quill");
+    quillInstances[key] = new Quill(editorEl, {
+      theme: "snow",
+      placeholder: "Digite com formatação...",
+      modules: {
+        toolbar: [
+          [{ header: [1, 2, false] }],
+          ["bold", "italic", "underline"],
+          ["blockquote", "code-block"],
+          [{ list: "ordered" }, { list: "bullet" }],
+          ["clean"]
+        ]
+      }
+    });
+  });
+});
+
+
+function syncQuillEditors() {
+  document.querySelectorAll("[data-quill-target]").forEach(input => {
+    const key = input.getAttribute("data-quill-target");
+    const quill = quillInstances[key];
+    if (quill) {
+      input.value = quill.root.innerHTML;
+    }
+  });
+}
+
+
+
+function submitScienceEntry() {
+  syncQuillEditors(); // ← isso é obrigatório ANTES de montar o FormData
+
+  const form = document.getElementById("scienceForm");
+  const formData = new FormData(form);
+
+  fetch('/science', {
+    method: 'POST',
+    body: formData
+  })
+  .then(res => res.json())
+  .then(result => {
+    alert(result.message || 'Salvo com sucesso');
+    loadScienceEntries()
+
+    // aqui você pode limpar campos, fechar modal, recarregar tabela, etc.
+  })
+  .catch(err => {
+    console.error('Erro ao salvar:', err);
+    alert('Erro ao salvar');
+  });
+}
+
+
+document.getElementById('addLearnMoreModal').addEventListener('show.bs.modal', () => {
+  // Limpa o form
+  document.getElementById('learnMoreForm').reset();
+
+  // Limpa o conteúdo do Quill
+  const quill = quillInstances['learn-add-description'];
+  if (quill) {
+    quill.setContents([]);
+  }
+});
+</script>
+
+
+
+
 </body>
 </html>
