@@ -1051,7 +1051,7 @@ path.setAttribute('fill', result.favorited ? '#e94057' : '#adb5bd');
         }
     
         // Instructions
-        document.getElementById('recipeModalInstructions').innerText = recipe.instructions || 'N/A';
+        document.getElementById('recipeModalInstructions').innerHTML = recipe.instructions || 'N/A';
     
         const modal = new bootstrap.Modal(document.getElementById('recipeModal'));
         modal.show();

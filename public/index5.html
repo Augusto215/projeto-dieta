@@ -410,7 +410,7 @@
         document.getElementById('learnModalTitle').innerText = data.title;
         document.getElementById('learnModalContent').innerHTML = `
           <div class="article-content">
-            <p>${data.text || ''}</p>
+            <p>${data.description || ''}</p>
             <div class="references"><p>${data.references_text || ''}</p></div>
           </div>
         `;
