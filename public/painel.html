@@ -35,12 +35,13 @@
         }
         
         .sidebar {
-            background-color: var(--deep-graphite);
-            color: var(--warm-sand);
-            height: 100vh;
-            position: fixed;
-            padding-top: 20px;
-            transition: all 0.3s;
+             background-color: var(--deep-graphite);
+    color: var(--warm-sand);
+    height: 100vh;
+    position: fixed;
+    padding-top: 20px;
+    transition: all 0.3s;
+    width: 240px; /* ADICIONE ESTA LINHA */
         }
         
         .sidebar .nav-link {
@@ -173,30 +174,29 @@
         <hr>
         <ul class="nav nav-pills flex-column mb-auto">
             <li class="nav-item">
-                <a href="#" class="nav-link active" data-bs-toggle="tab" data-bs-target="#dashboard">
-                    <i class="bi bi-house-door"></i> <span>Dashboard</span>
-                </a>
+             
             </li>
             <li class="nav-item">
-                <a href="#" class="nav-link" data-bs-toggle="tab" data-bs-target="#recipes">
+              <a href="#" class="nav-link active" data-bs-toggle="tab" data-bs-target="#users">
+                  <i class="bi bi-people"></i> <span>Users</span>
+              </a>
+          </li>
+            <li class="nav-item">
+                <a href="#" class="  nav-link" data-bs-toggle="tab" data-bs-target="#recipes">
                     <i class="bi bi-egg-fried"></i> <span>Recipes</span>
                 </a>
             </li>
             <li class="nav-item">
-                <a href="#" class="nav-link" data-bs-toggle="tab" data-bs-target="#challenges">
+                <a href="#" class="d-none nav-link" data-bs-toggle="tab" data-bs-target="#challenges">
                     <i class="bi bi-trophy"></i> <span>Challenges</span>
                 </a>
             </li>
             <li class="nav-item">
-                <a href="#" class="nav-link" data-bs-toggle="tab" data-bs-target="#articles">
+                <a href="#" class="nav-link d-none" data-bs-toggle="tab" data-bs-target="#articles">
                     <i class="bi bi-newspaper"></i> <span>Articles</span>
                 </a>
             </li>
-            <li class="nav-item">
-                <a href="#" class="nav-link" data-bs-toggle="tab" data-bs-target="#users">
-                    <i class="bi bi-people"></i> <span>Users</span>
-                </a>
-            </li>
+            
             <li class="nav-item">
                 <a href="#" class="nav-link" data-bs-toggle="tab" data-bs-target="#glucose-walk">
                   <i class="bi bi-activity"></i> <span>Glucose Walk</span>
@@ -222,7 +222,7 @@
         </ul>
         <hr>
         <div class="dropdown">
-            <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
+            <a href="#" class="d-none align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
                 <img src="/api/placeholder/40/40" width="32" height="32" class="rounded-circle me-2" alt="Admin">
                 <span>Admin</span>
             </a>
@@ -238,111 +238,11 @@
     <!-- Main Content -->
     <main class="content">
         <div class="tab-content">
-            <!-- Dashboard Tab -->
-            <div class="tab-pane fade show active" id="dashboard">
-                <div class="container-fluid">
-                    <h1 class="page-title">Dashboard</h1>
-                    
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div class="card">
-                                <div class="card-body">
-                                    <h5 class="card-title">Total Recipes</h5>
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div class="display-4">42</div>
-                                        <i class="bi bi-egg-fried fs-1 text-primary"></i>
-                                    </div>
-                                    <p class="text-muted">Last added: 05/03/2025</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="card">
-                                <div class="card-body">
-                                    <h5 class="card-title">Total Challenges</h5>
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div class="display-4">15</div>
-                                        <i class="bi bi-trophy fs-1 text-warning"></i>
-                                    </div>
-                                    <p class="text-muted">Last added: 05/01/2025</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="card">
-                                <div class="card-body">
-                                    <h5 class="card-title">Total Articles</h5>
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div class="display-4">28</div>
-                                        <i class="bi bi-newspaper fs-1 text-info"></i>
-                                    </div>
-                                    <p class="text-muted">Last added: 05/04/2025</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="row mt-4">
-                        <div class="col-12">
-                            <div class="card">
-                                <div class="card-header">
-                                    <h5 class="mb-0">Recent Activities</h5>
-                                </div>
-                                <div class="card-body">
-                                    <div class="table-responsive">
-                                        <table class="table">
-                                            <thead>
-                                                <tr>
-                                                    <th>Date</th>
-                                                    <th>Activity</th>
-                                                    <th>User</th>
-                                                    <th>Type</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <td>05/05/2025</td>
-                                                    <td>Added new recipe: "Berry Smoothie Bowl"</td>
-                                                    <td>admin@plana.com</td>
-                                                    <td><span class="badge bg-primary">Recipe</span></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>05/04/2025</td>
-                                                    <td>Added new article: "Glucose Balance - Quick Tips"</td>
-                                                    <td>admin@plana.com</td>
-                                                    <td><span class="badge bg-info">Article</span></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>05/01/2025</td>
-                                                    <td>Added new challenge: "7 Days Without Refined Sugar"</td>
-                                                    <td>admin@plana.com</td>
-                                                    <td><span class="badge bg-warning text-dark">Challenge</span></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>04/30/2025</td>
-                                                    <td>Updated recipe: "Quinoa Salad"</td>
-                                                    <td>admin@plana.com</td>
-                                                    <td><span class="badge bg-primary">Recipe</span></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>04/28/2025</td>
-                                                    <td>Added new article: "Anti-inflammatory Foods"</td>
-                                                    <td>admin@plana.com</td>
-                                                    <td><span class="badge bg-info">Article</span></td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+
 
             
             <!-- Recipes Tab -->
-            <div class="tab-pane fade" id="recipes">
+            <div class="tab-pane fade " id="recipes">
                 <div class="container-fluid">
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <h1 class="page-title">Manage Recipes</h1>
@@ -1116,125 +1016,27 @@
             </div>
             
             <!-- Users Tab -->
-            <div class="tab-pane fade" id="users">
+            <div class="tab-pane fade show active" id="users">
                 <div class="container-fluid">
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <h1 class="page-title">Manage Users</h1>
-                        <button class="btn btn-primary">
-                            <i class="bi bi-download"></i> Export Users
-                        </button>
+                     
                     </div>
                     
                     <div class="card">
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <h5 class="mb-0">User List</h5>
-                            <div class="input-group" style="max-width: 300px;">
-                                <input type="text" class="form-control" placeholder="Search users...">
-                                <button class="btn btn-outline-secondary" type="button">
-                                    <i class="bi bi-search"></i>
-                                </button>
-                            </div>
+                            
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
                                 <table class="table table-hover">
-                                    <thead>
-                                        <tr>
-                                            <th>User ID</th>
-                                            <th>Name</th>
-                                            <th>Email</th>
-                                            <th>Registration</th>
-                                            <th>Status</th>
-                                            <th>Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>#USR001</td>
-                                            <td>John Smith</td>
-                                            <td>john.smith@example.com</td>
-                                            <td>05/04/2025</td>
-                                            <td><span class="badge bg-success">Active</span></td>
-                                            <td>
-                                                <div class="btn-group table-action-buttons">
-                                                    <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i></button>
-                                                    <button class="btn btn-sm btn-outline-primary"><i class="bi bi-eye"></i></button>
-                                                    <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>#USR002</td>
-                                            <td>Maria Garcia</td>
-                                            <td>maria.garcia@example.com</td>
-                                            <td>04/30/2025</td>
-                                            <td><span class="badge bg-success">Active</span></td>
-                                            <td>
-                                                <div class="btn-group table-action-buttons">
-                                                    <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i></button>
-                                                    <button class="btn btn-sm btn-outline-primary"><i class="bi bi-eye"></i></button>
-                                                    <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>#USR003</td>
-                                            <td>Carlos Santos</td>
-                                            <td>carlos.santos@example.com</td>
-                                            <td>04/28/2025</td>
-                                            <td><span class="badge bg-warning text-dark">Pending</span></td>
-                                            <td>
-                                                <div class="btn-group table-action-buttons">
-                                                    <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i></button>
-                                                    <button class="btn btn-sm btn-outline-primary"><i class="bi bi-eye"></i></button>
-                                                    <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>#USR004</td>
-                                            <td>Ana Costa</td>
-                                            <td>ana.costa@example.com</td>
-                                            <td>04/27/2025</td>
-                                            <td><span class="badge bg-danger">Inactive</span></td>
-                                            <td>
-                                                <div class="btn-group table-action-buttons">
-                                                    <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i></button>
-                                                    <button class="btn btn-sm btn-outline-primary"><i class="bi bi-eye"></i></button>
-                                                    <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>#USR005</td>
-                                            <td>Paul Mendes</td>
-                                            <td>paul.mendes@example.com</td>
-                                            <td>04/25/2025</td>
-                                            <td><span class="badge bg-success">Active</span></td>
-                                            <td>
-                                                <div class="btn-group table-action-buttons">
-                                                    <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i></button>
-                                                    <button class="btn btn-sm btn-outline-primary"><i class="bi bi-eye"></i></button>
-                                                    <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    </tbody>
+                                   <tbody id="users-tbody">
+
+                                   </tbody>
                                 </table>
                             </div>
-                            <nav aria-label="Page navigation" class="mt-3">
-                                <ul class="pagination justify-content-center">
-                                    <li class="page-item disabled">
-                                        <a class="page-link" href="#" tabindex="-1">Previous</a>
-                                    </li>
-                                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                                    <li class="page-item"><a class="page-link" href="#">2</a></li>
-                                    <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                    <li class="page-item">
-                                        <a class="page-link" href="#">Next</a>
-                                    </li>
-                                </ul>
-                            </nav>
+                           
                         </div>
                     </div>
                 </div>
@@ -1705,7 +1507,7 @@
               const row = document.createElement('tr');
         
               row.innerHTML = `
-                <td><img src="${recipe.image_url || '/api/placeholder/60/60'}" class="rounded" width="60" height="60" alt="Recipe"></td>
+                <td><img style="object-fit:cover;" src="${recipe.image_url || '/api/placeholder/60/60'}" class="rounded" width="60" height="60" alt="Recipe"></td>
                 <td>${recipe.title}</td>
                 <td>${recipe.category}</td>
                 <td>${recipe.meal_type}</td>
@@ -2818,6 +2620,54 @@ document.getElementById('addLearnMoreModal').addEventListener('show.bs.modal', (
 });
 </script>
 
+<script>
+  async function loadUsers() {
+    try {
+      const res = await fetch('/api/users');
+      const users = await res.json();
+
+      const tbody = document.getElementById('users-tbody');
+      tbody.innerHTML = ''; // Limpa o corpo da tabela
+
+      users.forEach((user, index) => {
+        const date = new Date(user.created_at).toLocaleDateString();
+        const row = `
+          <tr>
+            <td>#USR${String(index + 1).padStart(3, '0')}</td>
+            <td>${user.first_name}</td>
+            <td>${user.email}</td>
+            <td>${date}</td>
+            <td><span class="badge bg-success">Active</span></td>
+            <td>
+             <!-- Nenhum botão -->
+            </td>
+          </tr>`;
+        tbody.insertAdjacentHTML('beforeend', row);
+      });
+
+    } catch (err) {
+      console.error('Erro ao carregar usuários:', err);
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', loadUsers);
+  document.addEventListener('DOMContentLoaded', function() {
+  const tabLinks = document.querySelectorAll('[data-bs-toggle="tab"]');
+  tabLinks.forEach(link => {
+    link.addEventListener('shown.bs.tab', function(e) {
+      document.querySelectorAll('.tab-pane').forEach(tab => {
+        tab.classList.remove('show', 'active');
+      });
+
+      const target = document.querySelector(e.target.getAttribute('data-bs-target'));
+      if (target) {
+        target.classList.add('show', 'active');
+      }
+    });
+  });
+});
+
+</script>
 
 
 

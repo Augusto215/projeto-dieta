@@ -1429,3 +1429,19 @@ app.get('/learn-more/:id', authenticateUser, async (req, res) => {
 
   return res.status(200).json(data);
 });
+
+
+app.get('/api/users', authenticateUser, async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from('users')
+      .select('id, first_name, email, created_at');
+
+    if (error) throw error;
+
+    return res.status(200).json(data);
+  } catch (err) {
+    console.error('[GET /api/users]', err.message);
+    return res.status(500).json({ message: 'Erro ao buscar usuários' });
+  }
+});
